@@ -39,4 +39,4 @@ def correr():
             evento = windowconf.Read()
         elif evento=='Cerrar' or None:
 		break
-	windowconf.Close()
+     windowconf.Close()
