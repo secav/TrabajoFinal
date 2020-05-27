@@ -14,7 +14,7 @@ def correr():
     for x in letras[14:27]:
         lista_col2.append([sg.Text(x),sg.InputText(size=(4,1)),sg.InputText(size=(4,1))])
 
-    layout_config=[[sg.Text('Dificultad:'),sg.Listbox(values=('Facil','Medio','Dificil'))],
+    layout_config=[[sg.Text('Dificultad:'),sg.InputCombo(values=('Facil','Medio','Dificil'))],
     [sg.Text('Tiempo en segundos: )'),sg.InputText()],
     [sg.Text('Cantidades de letras y puntos:')],
     [sg.Column(lista_col1),sg.Column(lista_col2)],
