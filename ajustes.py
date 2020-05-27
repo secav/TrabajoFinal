@@ -30,8 +30,8 @@ def correr():
         evento,valores = windowconf.Read()
         print(evento,valores)
         if valores['difi'] in dic:
-			texto=windowconf.FindElement('cambio')
-			texto.Update(valores['difi'])
+		texto=windowconf.FindElement('cambio')
+		texto.Update(valores['difi'])
 			
 			
         if evento=='Guardar':
@@ -40,6 +40,5 @@ def correr():
             archivo.close()
             evento = windowconf.Read()
         elif evento=='Cerrar' or None:
-			break
-    
-     windowconf.Close()
+		break
+	windowconf.Close()
