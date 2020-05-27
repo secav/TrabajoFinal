@@ -2,6 +2,8 @@ import PySimpleGUI as sg
 import string
 import json
 
+print()
+
 def correr():
     #layout de configuracion
     letras=list(string.ascii_uppercase)
