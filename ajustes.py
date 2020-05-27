@@ -1,7 +1,7 @@
 import PySimpleGUI as sg
 import string
 import json
-print('Hola')
+print('Hola'*2)
 
 
 print()
