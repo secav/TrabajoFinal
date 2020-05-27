@@ -30,10 +30,8 @@ def correr():
         evento,valores = windowconf.Read()
         print(evento,valores)
         if valores['difi'] in dic:
-		texto=windowconf.FindElement('cambio')
-		texto.Update(valores['difi'])
-			
-			
+	    texto=windowconf.FindElement('cambio')
+	    texto.Update(valores['difi'])		
         if evento=='Guardar':
             archivo=open('config.txt','w')
             json.dump(evento[1],archivo)
