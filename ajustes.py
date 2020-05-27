@@ -1,6 +1,8 @@
 import PySimpleGUI as sg
 import string
 import json
+print('Hola')
+
 
 def correr():
     #layout de configuracion
