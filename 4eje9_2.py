@@ -14,6 +14,51 @@ def comprobar(elem):
 
 def button(name,key ):
 	return (sg.Button(name,button_color=color_button,size=tam_button,key=key),name)
+def definir(inicio,ini,inicial):
+	posi=True
+	lista=[]
+	print(inicio)
+	if (inicio):
+		print('hola')
+		lista.append(ini.GetText())
+		valor=inicial+1
+		sig=window.FindElement(valor)
+		sumo=1
+		if(comprobar(sig,2)!=True):
+			valor=inicial+10
+			sig=window.FindElement(valor)
+			sumo=10
+			if(comprobar(sig,2)!=True):
+				posi=False
+			else:
+				lista.append(sig.GetText())
+		else:
+			lista.append(sig.GetText())
+		while(posi==True)and(valor+sumo<100):
+			print('while')
+			valor+=sumo
+			sig=window.FindElement(valor)
+			if(comprobar(sig,2)!=True):
+				posi=False
+			else:
+				lista.append(sig.GetText())
+		print('lista:',lista)
+		pal=''	
+		for i in lista:
+			pal=pal+i
+		print(pal)
+		sentence=parse(pal).split()
+		for lis in sentence:
+			for k in lis:
+				if(k[1]== 'VB'):
+					return 'verbo'
+				elif (k[1]== 'NN'):
+					return 'sustantivo'
+				else:
+					return 'otro'
+			
+	else:
+		return 'No se encontro palabra'
 
 def column():
 	tablero=[]
