@@ -32,19 +32,9 @@ but = lambda name : sg.Button(name,button_color=color_button,size=tam_button)
 letra='A B C D E F G H I J K L M N O P Q R S T U V W X Y Z'.split()
 print(letra)
 layout = [
-        #[sg.Graph((500,500),(0,260),(260,0), key='_GRAPH_', background_color='white',change_submits=True, drag_submits=False)],
          [sg.Column(column())],
 					
-		#[sg.Button(' ',key=y,button_color=color_button,size=tam_button)  for x in range(10) for y in range(x+1,x+10)],
-       # [sg.Button(' ',key=i,button_color=color_button,size=tam_button) for i in range(11,21)],
-       # [sg.Button(' ',key=i,button_color=color_button,size=tam_button) for i in range(21,31)],
-       # [sg.Button(' ',key=i,button_color=color_button,size=tam_button) for i in range(31,41)],
-       # [sg.Button(' ',key=i,button_color=color_button,size=tam_button) for i in range(41,51)],
-       # [sg.Button(' ',key=i,button_color=color_button,size=tam_button) for i in range(51,61)],
-       # [sg.Button(' ',key=i,button_color=color_button,size=tam_button) for i in range(61,71)],
-       # [sg.Button(' ',key=i,button_color=color_button,size=tam_button) for i in range(71,81)],
-       # [sg.Button(' ',key=i,button_color=color_button,size=tam_button) for i in range(81,91)],
-       # [sg.Button(' ',key=i,button_color=color_button,size=tam_button) for i in range(91,101)],
+		
         [but(letra_elegida(letra)),but(letra_elegida(letra)),but(letra_elegida(letra)),but(letra_elegida(letra)),but(letra_elegida(letra))]]
 
 window = sg.Window('Ejercicio1',layout)
