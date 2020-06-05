@@ -1,10 +1,24 @@
 import PySimpleGUI as sg
 import random
+import sys
 
-def letra_elegida(letra):
-	eleccion=random.choice(letra)
-	letra.remove(eleccion)
-	return eleccion
+#Genera un dicionario para probar, las tuplas contienen (cantidad , puntaje)
+letra='A B C D E F G H I J K L M N O P Q R S T U V W X Y Z'.split()
+dic_importado={}
+for x in letra:
+	dic_importado[x]=[10,20]
+
+#la funcion recibe el diccionario y retorna una letra
+def letra_elegida(dic):
+	if dic:
+		llave_random=random.choice(list(dic))
+		dic[llave_random][0] -=1
+		if dic[llave_random][0] == 0:
+			dic.pop(llave_random)
+		return llave_random
+	else:
+		sg.popup('El diccionario esta vacio')
+		sys.exit()
 
 def comprobar(elem):
 	print('texto:',elem.GetText())
@@ -94,13 +108,10 @@ tam_celda =25
 color_button = ('white','green')
 tam_button = 3,1
 but = lambda name : sg.Button(name,button_color=color_button,size=tam_button)
-letra='A B C D E F G H I J K L M N O P Q R S T U V W X Y Z'.split()
-print(letra)
 layout = [
          [sg.Column(column())],
-					
-		
-        [but(letra_elegida(letra)),but(letra_elegida(letra)),but(letra_elegida(letra)),but(letra_elegida(letra)),but(letra_elegida(letra))]]
+        [but(letra_elegida(dic_importado)),but(letra_elegida(dic_importado)),but(letra_elegida(dic_importado)),but(letra_elegida(dic_importado)),but(letra_elegida(dic_importado)),but(letra_elegida(dic_importado)),but(letra_elegida(dic_importado))]
+        ]
 
 window = sg.Window('Ejercicio1',layout)
 
