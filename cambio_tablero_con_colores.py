@@ -2,6 +2,10 @@ import PySimpleGUI as sg
 import random
 import sys
 
+#Recibe la palabra y hace la comparacion con pattern,por ahora solo retorna True
+def check_pattern():
+	return True
+
 #Genera un dicionario para probar, las tuplas contienen (cantidad , puntaje)
 letra='A B C D E F G H I J K L M N O P Q R S T U V W X Y Z'.split()
 dic_importado={}
@@ -25,6 +29,18 @@ def comprobar(elem):
 	if(elem.GetText()==''):
 		print('si es')
 		elem.Update(current_button_selected)
+
+#Calcula el puntaje de una letra dependiendo de el color del casillero
+def calcular_puntos(elem,current_button_selected):
+	puntaje_rojo=0.5
+	puntaje_azul=2
+	if elem.ButtonColor[1] == 'red':
+		puntos=dic_importado[current_button_selected][1]*puntaje_rojo
+	elif elem.ButtonColor[1] == 'blue':
+		puntos=dic_importado[current_button_selected][1]*puntaje_azul
+	else:
+		puntos=dic_importado[current_button_selected][1]
+	return puntos
 
 def button(name,key ):
 	return (sg.Button(name,button_color=color_button,size=tam_button,key=key),name)
@@ -74,7 +90,7 @@ def definir(inicio,ini,inicial):
 	else:
 		return 'No se encontro palabra'
 
-def column():#cambio del original, solo este metodo
+def column():
 	'''Retorna las filas de butones con los colores '''
 	sin_color=('black','white')
 	descuento=('white','red')
@@ -110,11 +126,13 @@ tam_button = 3,1
 but = lambda name : sg.Button(name,button_color=color_button,size=tam_button)
 layout = [
          [sg.Column(column())],
-        [but(letra_elegida(dic_importado)),but(letra_elegida(dic_importado)),but(letra_elegida(dic_importado)),but(letra_elegida(dic_importado)),but(letra_elegida(dic_importado)),but(letra_elegida(dic_importado)),but(letra_elegida(dic_importado))]
+        [but(letra_elegida(dic_importado)),but(letra_elegida(dic_importado)),but(letra_elegida(dic_importado)),but(letra_elegida(dic_importado)),but(letra_elegida(dic_importado)),but(letra_elegida(dic_importado)),but(letra_elegida(dic_importado)),but('Aceptar')]
         ]
 
-window = sg.Window('Ejercicio1',layout)
+window = sg.Window('ScrabbleAR',layout)
 
+acumulador_puntos_jugador=0
+sumador_puntos_jugador=0
 button_selected = False
 current_button_selected = ''
 Check_button = lambda x: window.FindElement(x).Update(button_color=('white','blue'))
@@ -128,7 +146,9 @@ while True:
     if type(event)==tuple and button_selected:
         print(event)
         elem=window.FindElement(event)
-        comprobar(elem)     
+        comprobar(elem)
+        sumador_puntos_jugador=sumador_puntos_jugador+calcular_puntos(elem,current_button_selected)
+        print(elem.ButtonColor)
         
     if button_selected:
 	    if event == current_button_selected:
@@ -140,3 +160,8 @@ while True:
         button_selected = True
         current_button_selected = event
         
+    if event == 'Aceptar':
+        if check_pattern():			
+            acumulador_puntos_jugador+=int(sumador_puntos_jugador)
+            sumador_puntos_jugador=0
+            print('Puntos jugador: '+str(acumulador_puntos_jugador))
