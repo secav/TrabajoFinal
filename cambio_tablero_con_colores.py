@@ -4,34 +4,41 @@ import sys
 
 #Recibe la palabra y hace la comparacion con pattern,por ahora solo retorna True
 #FALTA TODO EL TRAMO DE PATTERN
-def check_pattern(pal, nivel):
+def check_pattern(): #def check_pattern(pal, nivel)
 	'''esta funcion devuelve un boolean en true si la cadena es palabra, verbo o adjetivo dependiendo del nivel del juego'''
 	#if nivel=='facil':
 	#elif nivel=='medio':
 	#else:
-
 	return True
 
+#El dic_importado adentro del for es redundante??
 def crear_fichas():
-	#Genera un dicionario para probar, las tuplas contienen (cantidad , puntaje)
+	'''Genera una lista que contiene un diccionario con la cantidad y valor en puntos de cada letra y una lista que informa la cantidad de letras de las que hay mas de 0'''
+	#x[0] es la letra, x[1] es la cantidad y x[2] es el valor en puntos
 	letra=[('A',11,1),('B',3,3),('C',4,2),('D',4,2),('E',11,1),('F',2,4),('G',2,1),('H',2,4),('I',6,1),('J',2,4),('K',1,8),('L',4,1),('LL',1,8),('M',3,2),('N',5,1),('Ñ',1,8),('O',8,1),('P',2,3),('Q',1,8),('R',4,1),('RR',1,8),('S',7,1),('T',4,1),('U',6,1),('V',2,4),('W',1,8),('X',1,8),('Y',1,4),('Z',1,10)]
 	dic_importado={}
+	lista_disponibles=[]
+	lista_completa=[]
 	for x in letra:
-		print(x[0])
+		if x[1] > 0:
+			lista_disponibles.append(x[0])
 		dic_importado[x[0]]=[x[1],x[2]]
-	return dic_importado
+	lista_completa=[dic_importado,lista_disponibles]
+	return lista_completa
 
 #la funcion recibe el diccionario y retorna una letra
 def letra_elegida(dic):
-	if dic:
-		llave_random=random.choice(list(dic))
-		dic[llave_random][0] -=1
-		if dic[llave_random][0] == 0:
-			dic.pop(llave_random)
+	'''La funcion recibe la lista de fichas y retorna una letra'''
+	if dic[1]:
+		llave_random=random.choice(dic[1])
+		dic[0][llave_random][0] -=1
+		if dic[0][llave_random][0] == 0:
+			dic[1].remove(llave_random)
 		return llave_random
 	else:
 		sg.popup('El diccionario esta vacio')
 		sys.exit()
+		
 def letrasjuntas(a, b):
 	'''devuelve true si las 2 letras ingresadas pueden estar juntas en una palabra'''
 	es_vocal= lambda x: x in "aeiou"
@@ -73,6 +80,7 @@ def comprobar(elem):
 	if(elem.GetText()==''):
 		print('si es')
 		elem.Update(current_button_selected)
+		
 def comprobar_fichas(elem,event, indice, dic_letra_anterior, list_palabra, abajo, al_lado):
 	'''esta funcion ve si se van poniendo las letras consecutivamente y las guarda en una lista '''
 	continuar=True
@@ -107,18 +115,16 @@ def comprobar_fichas(elem,event, indice, dic_letra_anterior, list_palabra, abajo
 	print(dic_letra_anterior)
 	return indice, dic_letra_anterior, list_palabra, abajo, al_lado, continuar
 
-
-#Calcula el puntaje de una letra dependiendo de el color del casillero
-def calcular_puntos(elem,current_button_selected):
+def calcular_puntos(elem,current_button_selected,bolsa):
+	'''Calcula el puntaje de una letra dependiendo de el color del casillero'''
 	puntaje_rojo=0.5
 	puntaje_azul=2
 	if elem.ButtonColor[1] == 'red':
-		puntos=dic_importado[current_button_selected][1]*puntaje_rojo
+		puntos=bolsa[0][current_button_selected][1]*puntaje_rojo
 	elif elem.ButtonColor[1] == 'blue':
-		puntos=dic_importado[current_button_selected][1]*puntaje_azul
+		puntos=bolsa[0][current_button_selected][1]*puntaje_azul
 	else:
-		puntos=dic_importado[current_button_selected][1]
-	print(puntos)
+		puntos=bolsa[0][current_button_selected][1]
 	return puntos
 
 def button(name,key ):
@@ -128,7 +134,6 @@ def definir(inicio,ini,inicial):
 	lista=[]
 	print(inicio)
 	if (inicio):
-		print('hola')
 		lista.append(ini.GetText())
 		valor=inicial+1
 		sig=window.FindElement(valor)
@@ -197,9 +202,10 @@ def column():
 			row.append(sg.Button('',  size=(3, 1),button_color=color, pad=(0, 0), key=(i,j)))
 		tablero.append(row)
 	
-	return tablero		
-dic_importado=crear_fichas()	
-print(dic_importado.items())
+	return tablero
+			
+bolsa_fichas=crear_fichas()
+
 lista_tuplas_usadas=[]
 list_palabra=[]
 indice=-1
@@ -208,17 +214,19 @@ al_lado=False
 continuar=True
 dic_letras={}
 dic_letra_anterior={}
+
 tam_celda =25
 color_button = ('white','green')
 tam_button = 3,1
 but = lambda name : sg.Button(name,button_color=color_button,size=tam_button)
 layout = [[sg.Button('INICIAR',button_color=('white','black'),key='inicio'),sg.Text('Turno:                          ',key='tur'),sg.Button('Configuracion',button_color=('white','black'),key='conf')],
          [sg.Column(column())],
-        [but(letra_elegida(dic_importado)),but(letra_elegida(dic_importado)),but(letra_elegida(dic_importado)),but(letra_elegida(dic_importado)),but(letra_elegida(dic_importado)),but(letra_elegida(dic_importado)),but(letra_elegida(dic_importado)),but('Aceptar')]
+        [but(letra_elegida(bolsa_fichas)),but(letra_elegida(bolsa_fichas)),but(letra_elegida(bolsa_fichas)),but(letra_elegida(bolsa_fichas)),but(letra_elegida(bolsa_fichas)),but(letra_elegida(bolsa_fichas)),but(letra_elegida(bolsa_fichas)),but('Aceptar')]
         ]
 
 window = sg.Window('ScrabbleAR',layout)
 
+listo=False
 acumulador_puntos_jugador=0
 sumador_puntos_jugador=0
 button_selected = False
@@ -228,7 +236,6 @@ Uncheck_button = lambda x: window.FindElement(x).Update(button_color=('white','g
 while True:
     event, values = window.Read()
     print(event,values)
-    print(values)
     if event is None or 'tipo' == 'Exit':
         break
     if event is 'inicio' and listo==False:
@@ -245,8 +252,7 @@ while True:
         print(event)
         elem=window.FindElement(event)
         comprobar(elem)
-        sumador_puntos_jugador=sumador_puntos_jugador+calcular_puntos(elem,current_button_selected)
-        print(elem.ButtonColor)
+        sumador_puntos_jugador=sumador_puntos_jugador+calcular_puntos(elem,current_button_selected,bolsa_fichas)
         if not(event in lista_tuplas_usadas):
             elem=window.FindElement(event)
             comprobar(elem)
@@ -269,8 +275,8 @@ while True:
         button_selected = True
         current_button_selected = event
         
-    elif event == 'Aceptar':
+    if event == 'Aceptar':
         if check_pattern():			
-            acumulador_puntos_jugador+=int(sumador_puntos_jugador)
+            acumulador_puntos_jugador+=sumador_puntos_jugador
             sumador_puntos_jugador=0
-            print('Puntos jugador: '+str(acumulador_puntos_jugador))
+            print('Puntos jugador: '+str(int(acumulador_puntos_jugador)))
