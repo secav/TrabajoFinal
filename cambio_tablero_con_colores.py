@@ -94,24 +94,24 @@ def comprobar_fichas(elem,event, indice, dic_letra_anterior, list_palabra, abajo
 	continuar=True
 	indice=indice+1
 	if indice==0:
-		dic_letras['pos']=indice
-		dic_letras['tup']=event
-		dic_letras['letra']=elem.GetText()
+		dic_letras_anterior['pos']=indice
+		dic_letras_anterior['tup']=event
+		dic_letras_anterior['letra']=elem.GetText()
 		list_palabra.append(dic_letras)
 		print('primera letra')
 	elif (event[0]==dic_letra_anterior['tup'][0]) and (event[1]==dic_letra_anterior['tup'][1]+1) and (abajo==False) and (letrasjuntas(dic_letra_anterior['letra'],elem.GetText())):
 		al_lado=True
-		dic_letras['pos']=indice
-		dic_letras['tup']=event
-		dic_letras['letra']=elem.GetText()
+		dic_letras_anterior['pos']=indice
+		dic_letras_anterior['tup']=event
+		dic_letras_anterior['letra']=elem.GetText()
 		list_palabra.append(dic_letras)
 		boton_confirmar=True
 		print('letra valida al costado')
 	elif (event[0]==dic_letra_anterior['tup'][0]+1) and (event[1]==dic_letra_anterior['tup'][1]) and (al_lado==False) and (letrasjuntas(dic_letra_anterior['letra'],elem.GetText())):
 		abajo=True
-		dic_letras['pos']=indice
-		dic_letras['tup']=event
-		dic_letras['letra']=elem.GetText()
+		dic_letras_anterior['pos']=indice
+		dic_letras_anterior['tup']=event
+		dic_letras_anterior['letra']=elem.GetText()
 		list_palabra.append(dic_letras)
 		boton_confirmar=True
 		print('letra valida abajo')
@@ -119,7 +119,7 @@ def comprobar_fichas(elem,event, indice, dic_letra_anterior, list_palabra, abajo
 		indice=indice-1
 		continuar=False
 		print('letra lejos o no valida')
-	dic_letra_anterior=dic_letras.copy()
+#	dic_letra_anterior=dic_letras.copy()
 	print(dic_letra_anterior)
 	return indice, dic_letra_anterior, list_palabra, abajo, al_lado, continuar
 
@@ -307,6 +307,12 @@ while True:
             acumulador_puntos_jugador+=sumador_puntos_jugador
             sumador_puntos_jugador=0
             print('Puntos jugador: '+str(int(acumulador_puntos_jugador)))
+	    indice=0
+	    dic_letra_anterior={}
+	    list_palabra=[]
+	    abajo=False
+	    al_lado=False
+	    continuar=True
         else:
             for i in fichas_recien_usadas:
           
