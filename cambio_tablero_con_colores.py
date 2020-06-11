@@ -24,6 +24,7 @@ def crear_fichas():
 			lista_disponibles.append(x[0])
 		dic_importado[x[0]]=[x[1],x[2]]
 	lista_completa=[dic_importado,lista_disponibles]
+	print(lista_completa)
 	return lista_completa
 
 #la funcion recibe el diccionario y retorna una letra
@@ -79,7 +80,14 @@ def comprobar(elem):
 	print('texto:',elem.GetText())
 	if(elem.GetText()==''):
 		print('si es')
-		elem.Update(current_button_selected)
+		if(len(current_button_selected)>1)and not(current_button_selected[1].isdigit()):
+			print('len',len(current_button_selected),'es digito',current_button_selected[1].isdigit())
+			
+			x=current_button_selected[0]+current_button_selected[1]
+		else:
+			x=current_button_selected[0]
+		print('x:',x)
+		elem.Update(x)
 		
 def comprobar_fichas(elem,event, indice, dic_letra_anterior, list_palabra, abajo, al_lado):
 	'''esta funcion ve si se van poniendo las letras consecutivamente y las guarda en una lista '''
@@ -119,12 +127,17 @@ def calcular_puntos(elem,current_button_selected,bolsa):
 	'''Calcula el puntaje de una letra dependiendo de el color del casillero'''
 	puntaje_rojo=0.5
 	puntaje_azul=2
-	if elem.ButtonColor[1] == 'red':
-		puntos=bolsa[0][current_button_selected][1]*puntaje_rojo
-	elif elem.ButtonColor[1] == 'blue':
-		puntos=bolsa[0][current_button_selected][1]*puntaje_azul
+	if(len(current_button_selected)>1)and not(current_button_selected[1].isdigit()):
+		x=current_button_selected[0]+current_button_selected[1]
 	else:
-		puntos=bolsa[0][current_button_selected][1]
+		x=current_button_selected[0]          
+	print(x)
+	if elem.ButtonColor[1] == 'red':
+		puntos=bolsa[0][x][1]*puntaje_rojo
+	elif elem.ButtonColor[1] == 'blue':
+		puntos=bolsa[0][x][1]*puntaje_azul
+	else:
+		puntos=bolsa[0][x][1]
 	return puntos
 
 def button(name,key ):
@@ -203,6 +216,11 @@ def column():
 		tablero.append(row)
 	
 	return tablero
+	
+
+		
+	
+#programa principal:
 			
 bolsa_fichas=crear_fichas()
 
@@ -221,8 +239,8 @@ tam_button = 3,1
 but = lambda name : sg.Button(name,button_color=color_button,size=tam_button)
 layout = [[sg.Button('INICIAR',button_color=('white','black'),key='inicio'),sg.Text('Turno:                          ',key='tur'),sg.Button('Configuracion',button_color=('white','black'),key='conf')],
          [sg.Column(column())],
-        [but(letra_elegida(bolsa_fichas)),but(letra_elegida(bolsa_fichas)),but(letra_elegida(bolsa_fichas)),but(letra_elegida(bolsa_fichas)),but(letra_elegida(bolsa_fichas)),but(letra_elegida(bolsa_fichas)),but(letra_elegida(bolsa_fichas)),but('Aceptar')]
-        ]
+        [but(letra_elegida(bolsa_fichas)),but(letra_elegida(bolsa_fichas)),but(letra_elegida(bolsa_fichas)),but(letra_elegida(bolsa_fichas)),but(letra_elegida(bolsa_fichas)),but(letra_elegida(bolsa_fichas)),but(letra_elegida(bolsa_fichas))],
+        [sg.Text('                                                                      '),sg.Button('Verificar',button_color=('white','red'),key='verifica')]]
 
 window = sg.Window('ScrabbleAR',layout)
 
@@ -231,14 +249,18 @@ acumulador_puntos_jugador=0
 sumador_puntos_jugador=0
 button_selected = False
 current_button_selected = ''
-Check_button = lambda x: window.FindElement(x).Update(button_color=('white','blue'))
-Uncheck_button = lambda x: window.FindElement(x).Update(button_color=('white','green'))
+Check_button = lambda x: window.FindElement(x).Update(button_color=('black','yellow'))
+Uncheck_button = lambda x:x.Update(button_color=('white','green'))
+block_button=lambda x: x.Update(button_color=('black','red'))
+fichas_usadas=[]
+tuplas_recien_usadas=[]
+fichas_recien_usadas=[]
 while True:
     event, values = window.Read()
     print(event,values)
     if event is None or 'tipo' == 'Exit':
         break
-    if event is 'inicio' and listo==False:
+    elif event =='inicio' and listo==False:
         listo=True
         desicion=['computadora','usuario']
         eleccion=random.choice(desicion)
@@ -248,35 +270,54 @@ while True:
         inicio=window.FindElement('inicio')
         inicio.Update('Posponer')
 		
-    if type(event)==tuple and button_selected:
+    elif type(event)==tuple and not(ficha in fichas_usadas) and button_selected:
         print(event)
         elem=window.FindElement(event)
-        comprobar(elem)
+        
         sumador_puntos_jugador=sumador_puntos_jugador+calcular_puntos(elem,current_button_selected,bolsa_fichas)
         if not(event in lista_tuplas_usadas):
             elem=window.FindElement(event)
-            comprobar(elem)
+            
             print('imprimo el get texto')
             print(elem.GetText())
             indice, dic_letra_anterior, list_palabra, abajo, al_lado, continuar=comprobar_fichas(elem,event,indice, dic_letra_anterior, list_palabra, abajo, al_lado)
             print('salio')
             if continuar== True:
-                elem.Update(current_button_selected)
-                print('sigue')
+                comprobar(elem)
+                print('ficha.GetText():',ficha.GetText())
                 lista_tuplas_usadas.append(event)
-        
-    if button_selected:
-	    if event == current_button_selected:
-		    Uncheck_button(event)
-		    button_selected = False
-		    current_button_selected = ''
-    elif type(event)==str and (event!='inicio') and (event!='conf') :
-        Check_button(event)
-        button_selected = True
-        current_button_selected = event
-        
-    if event == 'Aceptar':
-        if check_pattern():			
+                tuplas_recien_usadas.append(event)#son los lugares recien ocupados, si la palabra no es correcta tengo que sacar de estos lugares lo escrito
+                fichas_usadas.append(ficha)
+                fichas_recien_usadas.append(ficha)#son las fichas elegidas ese turno por el usuario, las tengo que devolver en caso de que sea incorrecto
+                block_button(ficha)
+   
+    elif type(event)==str and (event!='inicio') and (event!='conf') and (event!='verifica') :
+        ficha=window.FindElement(event)
+        print('tipo:',type(ficha))
+        print(ficha.ButtonColor)
+       
+        if not(ficha in fichas_usadas):
+            #Check_button(event)
+            button_selected = True
+            current_button_selected=event
+            
+    ## aca esta el problema, cuando entre en verificar, la variable del lugar de la primera letra deberia cambiar             
+    if event == 'verifica': #en el sg.text iria: no se encontro la palabra, es palabra o es adjetivo, es verbo. dependiendo del nivel y de lo que suceda
+        if not(check_pattern()):			
             acumulador_puntos_jugador+=sumador_puntos_jugador
             sumador_puntos_jugador=0
             print('Puntos jugador: '+str(int(acumulador_puntos_jugador)))
+        else:
+            for i in fichas_recien_usadas:
+          
+                if i in fichas_usadas:         #Lu esto es lo que modifique yo, despues lo hago funcion
+                    print('ESTA',i.GetText())
+                    fichas_usadas.remove(i)
+                    Uncheck_button(i)
+            for k in tuplas_recien_usadas:
+                lugar=window.FindElement(k)
+                lugar.Update('')
+        tuplas_recien_usadas=[]
+        fichas_recien_usadas=[]
+
+			
