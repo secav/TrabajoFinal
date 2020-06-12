@@ -39,7 +39,7 @@ def letra_elegida(dic):
 	else:
 		sg.popup('El diccionario esta vacio')
 		sys.exit()
-		
+
 def letrasjuntas(a, b):
 	'''devuelve true si las 2 letras ingresadas pueden estar juntas en una palabra'''
 	es_vocal= lambda x: x in "aeiou"
@@ -82,36 +82,36 @@ def comprobar(elem):
 		print('si es')
 		if(len(current_button_selected)>1)and not(current_button_selected[1].isdigit()):
 			print('len',len(current_button_selected),'es digito',current_button_selected[1].isdigit())
-			
+
 			x=current_button_selected[0]+current_button_selected[1]
 		else:
 			x=current_button_selected[0]
 		print('x:',x)
 		elem.Update(x)
-		
+
 def comprobar_fichas(elem,event, indice, dic_letra_anterior, list_palabra, abajo, al_lado):
 	'''esta funcion ve si se van poniendo las letras consecutivamente y las guarda en una lista '''
 	continuar=True
 	indice=indice+1
 	if indice==0:
-		dic_letras_anterior['pos']=indice
-		dic_letras_anterior['tup']=event
-		dic_letras_anterior['letra']=elem.GetText()
+		dic_letra_anterior['pos']=indice
+		dic_letra_anterior['tup']=event
+		dic_letra_anterior['letra']=elem.GetText()
 		list_palabra.append(dic_letras)
 		print('primera letra')
 	elif (event[0]==dic_letra_anterior['tup'][0]) and (event[1]==dic_letra_anterior['tup'][1]+1) and (abajo==False) and (letrasjuntas(dic_letra_anterior['letra'],elem.GetText())):
 		al_lado=True
-		dic_letras_anterior['pos']=indice
-		dic_letras_anterior['tup']=event
-		dic_letras_anterior['letra']=elem.GetText()
+		dic_letra_anterior['pos']=indice
+		dic_letra_anterior['tup']=event
+		dic_letra_anterior['letra']=elem.GetText()
 		list_palabra.append(dic_letras)
 		boton_confirmar=True
 		print('letra valida al costado')
 	elif (event[0]==dic_letra_anterior['tup'][0]+1) and (event[1]==dic_letra_anterior['tup'][1]) and (al_lado==False) and (letrasjuntas(dic_letra_anterior['letra'],elem.GetText())):
 		abajo=True
-		dic_letras_anterior['pos']=indice
-		dic_letras_anterior['tup']=event
-		dic_letras_anterior['letra']=elem.GetText()
+		dic_letra_anterior['pos']=indice
+		dic_letra_anterior['tup']=event
+		dic_letra_anterior['letra']=elem.GetText()
 		list_palabra.append(dic_letras)
 		boton_confirmar=True
 		print('letra valida abajo')
@@ -130,7 +130,7 @@ def calcular_puntos(elem,current_button_selected,bolsa):
 	if(len(current_button_selected)>1)and not(current_button_selected[1].isdigit()):
 		x=current_button_selected[0]+current_button_selected[1]
 	else:
-		x=current_button_selected[0]          
+		x=current_button_selected[0]
 	print(x)
 	if elem.ButtonColor[1] == 'red':
 		puntos=bolsa[0][x][1]*puntaje_rojo
@@ -170,7 +170,7 @@ def definir(inicio,ini,inicial):
 			else:
 				lista.append(sig.GetText())
 		print('lista:',lista)
-		pal=''	
+		pal=''
 		for i in lista:
 			pal=pal+i
 		print(pal)
@@ -183,7 +183,7 @@ def definir(inicio,ini,inicial):
 					return 'sustantivo'
 				else:
 					return 'otro'
-			
+
 	else:
 		return 'No se encontro palabra'
 
@@ -214,14 +214,14 @@ def column():
 				color=sin_color
 			row.append(sg.Button('',  size=(3, 1),button_color=color, pad=(0, 0), key=(i,j)))
 		tablero.append(row)
-	
-	return tablero
-	
 
-		
-	
+	return tablero
+
+
+
+
 #programa principal:
-			
+
 bolsa_fichas=crear_fichas()
 
 lista_tuplas_usadas=[]
@@ -269,15 +269,15 @@ while True:
         texto.Update('Turno:'+eleccion)
         inicio=window.FindElement('inicio')
         inicio.Update('Posponer')
-		
+
     elif type(event)==tuple and not(ficha in fichas_usadas) and button_selected:
         print(event)
         elem=window.FindElement(event)
-        
+
         sumador_puntos_jugador=sumador_puntos_jugador+calcular_puntos(elem,current_button_selected,bolsa_fichas)
         if not(event in lista_tuplas_usadas):
             elem=window.FindElement(event)
-            
+
             print('imprimo el get texto')
             print(elem.GetText())
             indice, dic_letra_anterior, list_palabra, abajo, al_lado, continuar=comprobar_fichas(elem,event,indice, dic_letra_anterior, list_palabra, abajo, al_lado)
@@ -290,32 +290,43 @@ while True:
                 fichas_usadas.append(ficha)
                 fichas_recien_usadas.append(ficha)#son las fichas elegidas ese turno por el usuario, las tengo que devolver en caso de que sea incorrecto
                 block_button(ficha)
-   
+
     elif type(event)==str and (event!='inicio') and (event!='conf') and (event!='verifica') :
         ficha=window.FindElement(event)
         print('tipo:',type(ficha))
         print(ficha.ButtonColor)
-       
+
         if not(ficha in fichas_usadas):
             #Check_button(event)
             button_selected = True
             current_button_selected=event
-            
-    ## aca esta el problema, cuando entre en verificar, la variable del lugar de la primera letra deberia cambiar             
+
+    ## aca esta el problema, cuando entre en verificar, la variable del lugar de la primera letra deberia cambiar
     if event == 'verifica': #en el sg.text iria: no se encontro la palabra, es palabra o es adjetivo, es verbo. dependiendo del nivel y de lo que suceda
-        if not(check_pattern()):			
+#        indice=-1
+        i=0
+        dic_letra_anterior={}
+        list_palabra=[]
+        abajo=False
+        al_lado=False
+        continuar=True
+        cant_tuplas=len(lista_tuplas_usadas)-1
+        print(lista_tuplas_usadas)
+#        list_cant_tuplas=
+        if not(check_pattern()):
             acumulador_puntos_jugador+=sumador_puntos_jugador
             sumador_puntos_jugador=0
+            print('holaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
+            while i<= indice:
+                lista_tuplas_usadas.pop()
+                print(lista_tuplas_usadas , 'modificadaaaaaaaaaaaa')
+                i=i+1
             print('Puntos jugador: '+str(int(acumulador_puntos_jugador)))
-	    indice=0
-	    dic_letra_anterior={}
-	    list_palabra=[]
-	    abajo=False
-	    al_lado=False
-	    continuar=True
+            indice=-1
         else:
+            indice=-1
             for i in fichas_recien_usadas:
-          
+
                 if i in fichas_usadas:         #Lu esto es lo que modifique yo, despues lo hago funcion
                     print('ESTA',i.GetText())
                     fichas_usadas.remove(i)
@@ -325,5 +336,3 @@ while True:
                 lugar.Update('')
         tuplas_recien_usadas=[]
         fichas_recien_usadas=[]
-
-			
