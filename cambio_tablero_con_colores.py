@@ -217,7 +217,19 @@ def column():
 
 	return tablero
 
-
+def reinicio(fichas_recien_usadas,fichas_usadas,tuplas_recien_usadas,lista_tuplas_usadas):
+	'''Este metodo saca del tablero las letras que no cumplieron o que el usuario deseo borrar y permite volver a usar esas fichas  '''
+	for i in fichas_recien_usadas:
+		if i in fichas_usadas:
+			 print('ESTA',i.GetText())
+			 fichas_usadas.remove(i)
+			 Uncheck_button(i)
+	for k in tuplas_recien_usadas:
+		lugar=window.FindElement(k)
+		lugar.Update('')
+		if k in lista_tuplas_usadas:
+			lista_tuplas_usadas.remove(k)
+	
 
 
 #programa principal:
@@ -240,7 +252,7 @@ but = lambda name : sg.Button(name,button_color=color_button,size=tam_button)
 layout = [[sg.Button('INICIAR',button_color=('white','black'),key='inicio'),sg.Text('Turno:                          ',key='tur'),sg.Button('Configuracion',button_color=('white','black'),key='conf')],
          [sg.Column(column())],
         [but(letra_elegida(bolsa_fichas)),but(letra_elegida(bolsa_fichas)),but(letra_elegida(bolsa_fichas)),but(letra_elegida(bolsa_fichas)),but(letra_elegida(bolsa_fichas)),but(letra_elegida(bolsa_fichas)),but(letra_elegida(bolsa_fichas))],
-        [sg.Text('                                                                      '),sg.Button('Verificar',button_color=('white','red'),key='verifica')]]
+        [sg.Button('Borrar',button_color=('black','white'),key='borrador'),sg.Button('Verificar',button_color=('white','red'),key='verifica')]]
 
 window = sg.Window('ScrabbleAR',layout)
 
@@ -291,7 +303,7 @@ while True:
                 fichas_recien_usadas.append(ficha)#son las fichas elegidas ese turno por el usuario, las tengo que devolver en caso de que sea incorrecto
                 block_button(ficha)
 
-    elif type(event)==str and (event!='inicio') and (event!='conf') and (event!='verifica') :
+    elif type(event)==str and (event!='inicio') and (event!='conf') and (event!='verifica') and (event!='borrador') :
         ficha=window.FindElement(event)
         print('tipo:',type(ficha))
         print(ficha.ButtonColor)
@@ -302,37 +314,35 @@ while True:
             current_button_selected=event
 
     ## aca esta el problema, cuando entre en verificar, la variable del lugar de la primera letra deberia cambiar
-    if event == 'verifica': #en el sg.text iria: no se encontro la palabra, es palabra o es adjetivo, es verbo. dependiendo del nivel y de lo que suceda
-#        indice=-1
+    elif event == 'verifica': #en el sg.text iria: no se encontro la palabra, es palabra o es adjetivo, es verbo. dependiendo del nivel y de lo que suceda
+
         i=0
         dic_letra_anterior={}
         list_palabra=[]
         abajo=False
         al_lado=False
         continuar=True
-        cant_tuplas=len(lista_tuplas_usadas)-1
-        print(lista_tuplas_usadas)
-#        list_cant_tuplas=
-        if not(check_pattern()):
+
+        if (check_pattern()):
             acumulador_puntos_jugador+=sumador_puntos_jugador
             sumador_puntos_jugador=0
-            print('holaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
-            while i<= indice:
-                lista_tuplas_usadas.pop()
-                print(lista_tuplas_usadas , 'modificadaaaaaaaaaaaa')
-                i=i+1
             print('Puntos jugador: '+str(int(acumulador_puntos_jugador)))
             indice=-1
         else:
             indice=-1
-            for i in fichas_recien_usadas:
-
-                if i in fichas_usadas:         #Lu esto es lo que modifique yo, despues lo hago funcion
-                    print('ESTA',i.GetText())
-                    fichas_usadas.remove(i)
-                    Uncheck_button(i)
-            for k in tuplas_recien_usadas:
-                lugar=window.FindElement(k)
-                lugar.Update('')
+            reinicio(fichas_recien_usadas,fichas_usadas,tuplas_recien_usadas,lista_tuplas_usadas)
         tuplas_recien_usadas=[]
         fichas_recien_usadas=[]
+    elif event=='borrador':
+        i=0
+        dic_letra_anterior={}
+        list_palabra=[]
+        abajo=False
+        al_lado=False
+        continuar=True
+        indice=-1
+        reinicio(fichas_recien_usadas,fichas_usadas,tuplas_recien_usadas,lista_tuplas_usadas)
+        tuplas_recien_usadas=[]
+        fichas_recien_usadas=[]
+  #hay que tener en cuenta que cuando borre no pierda el turno el jugador
+ 
