@@ -251,7 +251,7 @@ tam_celda =25
 color_button = ('white','green')
 tam_button = 3,1
 but = lambda name : sg.Button(name,button_color=color_button,size=tam_button)
-layout = [[sg.Button('INICIAR',button_color=('white','black'),key='inicio'),sg.Text('Turno:                          ',key='tur'),sg.Button('Configuracion',button_color=('white','black'),key='conf'),sg.Button('Ranking',button_color=('white','black'),key='rank'),sg.Button('Reglas',button_color=('white','black'),key='reglas'],
+layout = [[sg.Button('INICIAR',button_color=('white','black'),key='inicio'),sg.Text('Turno:                          ',key='tur'),sg.Button('Configuracion',button_color=('white','black'),key='conf'),sg.Button('Ranking',button_color=('white','black'),key='rank'),sg.Button('Reglas',button_color=('white','black'),key='reglas')],
          [sg.Column(column()),sg.Button(image_filename="bolsa_roja.png",image_size=(100, 100),key="bolsa", border_width=0)],
         [but(letra_elegida(bolsa_fichas)),but(letra_elegida(bolsa_fichas)),but(letra_elegida(bolsa_fichas)),but(letra_elegida(bolsa_fichas)),but(letra_elegida(bolsa_fichas)),but(letra_elegida(bolsa_fichas)),but(letra_elegida(bolsa_fichas))],
         [sg.Button('Borrar',button_color=('black','white'),key='borrador'),sg.Button('Verificar',button_color=('white','red'),key='verifica')]]
