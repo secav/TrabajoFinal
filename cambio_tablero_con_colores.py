@@ -1,16 +1,27 @@
 import PySimpleGUI as sg
+from pattern.es import spelling,lexicon,tag
 import random
 import sys
 from modulo_reglas import imprimir_reglas
 
-#Recibe la palabra y hace la comparacion con pattern,por ahora solo retorna True
-#FALTA TODO EL TRAMO DE PATTERN
-def check_pattern(): #def check_pattern(pal, nivel)
-	'''esta funcion devuelve un boolean en true si la cadena es palabra, verbo o adjetivo dependiendo del nivel del juego'''
-	#if nivel=='facil':
-	#elif nivel=='medio':
-	#else:
-	return True
+
+
+def check_pattern(palabra,nivel,conjunto_dificil):
+	'''esta funcion devuelve un boolean en true si la palabra es sustantivo, verbo o adjetivo y es correcta dependiendo del nivel de dificultad'''
+	palabra=palabra.lower()
+	if (palabra in spelling) or (palabra in lexicon):
+		tipo_palabra=tag(palabra)[0][1]
+		print(tipo_palabra)
+		if nivel=='facil':
+			return True
+		elif (nivel=='medio') and (tipo_palabra=='VB' or tipo_palabra=='NN'):
+			return True
+		elif (nivel=='dificil') and (tipo_palabra==conjunto_dificil):
+			return True
+		else:
+			return False
+	else:
+		return False
 
 #El dic_importado adentro del for es redundante??
 def crear_fichas():
@@ -235,7 +246,17 @@ def reinicio(fichas_recien_usadas,fichas_usadas,tuplas_recien_usadas,lista_tupla
 
 #programa principal:
 
+#tiempo_juego                   #esto viene importado
+#dic_configuracion              #esto viene importado
+nivel_dificultad='facil'        #esto viene importado
+
 bolsa_fichas=crear_fichas()
+conjunto_hard=''
+if(nivel_dificultad=='dificil'):
+	posibles_conjuntos=['NN','VB','JJ']
+	conjunto_hard=random.choice(posibles_conjuntos)
+	print('Juega con el conjunto: '+conjunto_hard)
+
 
 lista_tuplas_usadas=[]
 list_palabra=[]
@@ -318,14 +339,10 @@ while True:
    
     elif event == 'verifica': #en el sg.text iria: no se encontro la palabra, es palabra o es adjetivo, es verbo. dependiendo del nivel y de lo que suceda
 
-        i=0
-        dic_letra_anterior={}
-        list_palabra=[]
-        abajo=False
-        al_lado=False
-        continuar=True
-
-        if (check_pattern()):
+        #####  lucia pasarle la palabra a pattern (list_palabra imprime mal) ###################################
+        print(list_palabra)
+        list_palabra=list_palabra.join()
+        if (check_pattern(list_palabra,nivel_dificultad,conjunto_hard)):
             acumulador_puntos_jugador+=sumador_puntos_jugador
             sumador_puntos_jugador=0
             print('Puntos jugador: '+str(int(acumulador_puntos_jugador)))
@@ -339,13 +356,24 @@ while True:
         else:
             indice=-1
             reinicio(fichas_recien_usadas,fichas_usadas,tuplas_recien_usadas,lista_tuplas_usadas)
+            sumador_puntos_jugador=0            
+
+        i=0
+        dic_letra_anterior={}
+        list_palabra=[]
+        abajo=False
+        al_lado=False
+        continuar=True
+        
         tuplas_recien_usadas=[]
         fichas_recien_usadas=[]
+        
     elif event == 'reglas':
         print('holaaaaaaaaaaaaa')
         imprimir_reglas()
 	
     elif event=='borrador':
+        sumador_puntos_jugador=0
         i=0
         dic_letra_anterior={}
         list_palabra=[]
