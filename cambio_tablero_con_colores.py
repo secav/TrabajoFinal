@@ -1,6 +1,7 @@
 import PySimpleGUI as sg
 import random
 import sys
+from modulo_reglas import imprimir_reglas
 
 #Recibe la palabra y hace la comparacion con pattern,por ahora solo retorna True
 #FALTA TODO EL TRAMO DE PATTERN
@@ -340,6 +341,10 @@ while True:
             reinicio(fichas_recien_usadas,fichas_usadas,tuplas_recien_usadas,lista_tuplas_usadas)
         tuplas_recien_usadas=[]
         fichas_recien_usadas=[]
+    elif event == 'reglas':
+        print('holaaaaaaaaaaaaa')
+        imprimir_reglas()
+	
     elif event=='borrador':
         i=0
         dic_letra_anterior={}
