@@ -245,12 +245,13 @@ continuar=True
 dic_letras={}
 dic_letra_anterior={}
 
+
 tam_celda =25
 color_button = ('white','green')
 tam_button = 3,1
 but = lambda name : sg.Button(name,button_color=color_button,size=tam_button)
 layout = [[sg.Button('INICIAR',button_color=('white','black'),key='inicio'),sg.Text('Turno:                          ',key='tur'),sg.Button('Configuracion',button_color=('white','black'),key='conf')],
-         [sg.Column(column())],
+         [sg.Column(column()),sg.Button(image_filename="bolsa_roja.png",image_size=(100, 100),key="bolsa", border_width=0)],
         [but(letra_elegida(bolsa_fichas)),but(letra_elegida(bolsa_fichas)),but(letra_elegida(bolsa_fichas)),but(letra_elegida(bolsa_fichas)),but(letra_elegida(bolsa_fichas)),but(letra_elegida(bolsa_fichas)),but(letra_elegida(bolsa_fichas))],
         [sg.Button('Borrar',button_color=('black','white'),key='borrador'),sg.Button('Verificar',button_color=('white','red'),key='verifica')]]
 
@@ -313,7 +314,7 @@ while True:
             button_selected = True
             current_button_selected=event
 
-    ## aca esta el problema, cuando entre en verificar, la variable del lugar de la primera letra deberia cambiar
+   
     elif event == 'verifica': #en el sg.text iria: no se encontro la palabra, es palabra o es adjetivo, es verbo. dependiendo del nivel y de lo que suceda
 
         i=0
@@ -328,6 +329,12 @@ while True:
             sumador_puntos_jugador=0
             print('Puntos jugador: '+str(int(acumulador_puntos_jugador)))
             indice=-1
+            for i in fichas_recien_usadas:
+                 i.Update(letra_elegida(bolsa_fichas))
+                 Uncheck_button(i)
+                 if i in fichas_usadas:
+                     fichas_usadas.remove(i)
+				
         else:
             indice=-1
             reinicio(fichas_recien_usadas,fichas_usadas,tuplas_recien_usadas,lista_tuplas_usadas)
