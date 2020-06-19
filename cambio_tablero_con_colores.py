@@ -109,14 +109,14 @@ def comprobar_fichas(elem,event, indice, dic_letra_anterior, list_palabra, abajo
 		dic_letra_anterior['pos']=indice
 		dic_letra_anterior['tup']=event
 		dic_letra_anterior['letra']=elem.GetText()
-		list_palabra.append(dic_letras)
-		print('primera letra')
+		list_palabra.append(dic_letra_anterior['letra'])
+		print('primera letra', elem.GetText())
 	elif (event[0]==dic_letra_anterior['tup'][0]) and (event[1]==dic_letra_anterior['tup'][1]+1) and (abajo==False) and (letrasjuntas(dic_letra_anterior['letra'],elem.GetText())):
 		al_lado=True
 		dic_letra_anterior['pos']=indice
 		dic_letra_anterior['tup']=event
 		dic_letra_anterior['letra']=elem.GetText()
-		list_palabra.append(dic_letras)
+		list_palabra.append(dic_letra_anterior['letra'])
 		boton_confirmar=True
 		print('letra valida al costado')
 	elif (event[0]==dic_letra_anterior['tup'][0]+1) and (event[1]==dic_letra_anterior['tup'][1]) and (al_lado==False) and (letrasjuntas(dic_letra_anterior['letra'],elem.GetText())):
@@ -124,7 +124,7 @@ def comprobar_fichas(elem,event, indice, dic_letra_anterior, list_palabra, abajo
 		dic_letra_anterior['pos']=indice
 		dic_letra_anterior['tup']=event
 		dic_letra_anterior['letra']=elem.GetText()
-		list_palabra.append(dic_letras)
+		list_palabra.append(dic_letra_anterior['letra'])
 		boton_confirmar=True
 		print('letra valida abajo')
 	else:
@@ -241,7 +241,7 @@ def reinicio(fichas_recien_usadas,fichas_usadas,tuplas_recien_usadas,lista_tupla
 		lugar.Update('')
 		if k in lista_tuplas_usadas:
 			lista_tuplas_usadas.remove(k)
-	
+
 
 
 #programa principal:
@@ -290,6 +290,7 @@ block_button=lambda x: x.Update(button_color=('black','red'))
 fichas_usadas=[]
 tuplas_recien_usadas=[]
 fichas_recien_usadas=[]
+palabra=''
 while True:
     event, values = window.Read()
     print(event,values)
@@ -309,13 +310,13 @@ while True:
         print(event)
         elem=window.FindElement(event)
 
-        sumador_puntos_jugador=sumador_puntos_jugador+calcular_puntos(elem,current_button_selected,bolsa_fichas)
+        sumador_puntos_jugador=sumador_puntos_jugador+calcular_puntos(ficha,current_button_selected,bolsa_fichas)
         if not(event in lista_tuplas_usadas):
             elem=window.FindElement(event)
 
             print('imprimo el get texto')
             print(elem.GetText())
-            indice, dic_letra_anterior, list_palabra, abajo, al_lado, continuar=comprobar_fichas(elem,event,indice, dic_letra_anterior, list_palabra, abajo, al_lado)
+            indice, dic_letra_anterior, list_palabra, abajo, al_lado, continuar=comprobar_fichas(ficha,event,indice, dic_letra_anterior, list_palabra, abajo, al_lado)
             print('salio')
             if continuar== True:
                 comprobar(elem)
@@ -336,13 +337,14 @@ while True:
             button_selected = True
             current_button_selected=event
 
-   
+
     elif event == 'verifica': #en el sg.text iria: no se encontro la palabra, es palabra o es adjetivo, es verbo. dependiendo del nivel y de lo que suceda
 
         #####  lucia pasarle la palabra a pattern (list_palabra imprime mal) ###################################
         print(list_palabra)
-        list_palabra=list_palabra.join()
-        if (check_pattern(list_palabra,nivel_dificultad,conjunto_hard)):
+        palabra=palabra.join(list_palabra)
+        print(palabra,'holaaaaaaaaaaa')
+        if (check_pattern(palabra,nivel_dificultad,conjunto_hard)):
             acumulador_puntos_jugador+=sumador_puntos_jugador
             sumador_puntos_jugador=0
             print('Puntos jugador: '+str(int(acumulador_puntos_jugador)))
@@ -352,11 +354,11 @@ while True:
                  Uncheck_button(i)
                  if i in fichas_usadas:
                      fichas_usadas.remove(i)
-				
+
         else:
             indice=-1
             reinicio(fichas_recien_usadas,fichas_usadas,tuplas_recien_usadas,lista_tuplas_usadas)
-            sumador_puntos_jugador=0            
+            sumador_puntos_jugador=0
 
         i=0
         dic_letra_anterior={}
@@ -364,14 +366,14 @@ while True:
         abajo=False
         al_lado=False
         continuar=True
-        
+
         tuplas_recien_usadas=[]
         fichas_recien_usadas=[]
-        
+
     elif event == 'reglas':
         print('holaaaaaaaaaaaaa')
         imprimir_reglas()
-	
+
     elif event=='borrador':
         sumador_puntos_jugador=0
         i=0
@@ -385,4 +387,3 @@ while True:
         tuplas_recien_usadas=[]
         fichas_recien_usadas=[]
   #hay que tener en cuenta que cuando borre no pierda el turno el jugador
- 
