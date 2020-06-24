@@ -3,6 +3,8 @@ from pattern.es import spelling,lexicon,tag
 import random
 import sys
 from modulo_reglas import imprimir_reglas
+import cambio_fichas as cf
+from threading import Timer as timer 
 
 
 
@@ -40,10 +42,17 @@ def crear_fichas():
 	return lista_completa
 
 #la funcion recibe el diccionario y retorna una letra
-def letra_elegida(dic):
+def letra_elegida(dic,cambio=False,ficha_cambio=None):
 	'''La funcion recibe la lista de fichas y retorna una letra'''
 	if dic[1]:
 		llave_random=random.choice(dic[1])
+		print(llave_random)
+		if(ficha_cambio!=None):
+			print(ficha_cambio.GetText())
+		if(cambio==True)and(llave_random==ficha_cambio.GetText()):
+			print('si')
+			llave_random=random.choice(dic[1])
+			
 		dic[0][llave_random][0] -=1
 		if dic[0][llave_random][0] == 0:
 			dic[1].remove(llave_random)
@@ -229,6 +238,20 @@ def column():
 
 	return tablero
 
+			
+	
+
+
+def columna_bolsa(seg,menos):
+	layout=[[sg.T('Tiempo ')],
+	[sg.T(seg)],
+	[sg.T(' '  * 10)],
+	[sg.T(' '  * 10)],
+	[sg.Button(image_filename="bolsa_roja.png",image_size=(100, 100),key="bolsa", border_width=0)],
+	[sg.Text('Presione aqui para')],
+	[sg.Text('cambiar las fichas'),sg.Text('(3)',key='cant_cambio')]]
+	return layout
+
 def reinicio(fichas_recien_usadas,fichas_usadas,tuplas_recien_usadas,lista_tuplas_usadas):
 	'''Este metodo saca del tablero las letras que no cumplieron o que el usuario deseo borrar y permite volver a usar esas fichas  '''
 	for i in fichas_recien_usadas:
@@ -241,7 +264,8 @@ def reinicio(fichas_recien_usadas,fichas_usadas,tuplas_recien_usadas,lista_tupla
 		lugar.Update('')
 		if k in lista_tuplas_usadas:
 			lista_tuplas_usadas.remove(k)
-
+def timeout():
+	print('fin del juego')
 
 
 #programa principal:
@@ -271,10 +295,11 @@ dic_letra_anterior={}
 tam_celda =25
 color_button = ('white','green')
 tam_button = 3,1
-but = lambda name : sg.Button(name,button_color=color_button,size=tam_button)
-layout = [[sg.Button('INICIAR',button_color=('white','black'),key='inicio'),sg.Text('Turno:                          ',key='tur'),sg.Button('Configuracion',button_color=('white','black'),key='conf'),sg.Button('Ranking',button_color=('white','black'),key='rank'),sg.Button('Reglas',button_color=('white','black'),key='reglas')],
-         [sg.Column(column()),sg.Button(image_filename="bolsa_roja.png",image_size=(100, 100),key="bolsa", border_width=0)],
-        [but(letra_elegida(bolsa_fichas)),but(letra_elegida(bolsa_fichas)),but(letra_elegida(bolsa_fichas)),but(letra_elegida(bolsa_fichas)),but(letra_elegida(bolsa_fichas)),but(letra_elegida(bolsa_fichas)),but(letra_elegida(bolsa_fichas))],
+but = lambda name,clave : sg.Button(name,button_color=color_button,size=tam_button,key=clave)
+layout = [     
+         [sg.Button('INICIAR',button_color=('white','black'),key='inicio'),sg.Text('Turno:                          ',key='tur'),sg.Button('Configuracion',button_color=('white','black'),key='conf'),sg.Button('Ranking',button_color=('white','black'),key='rank'),sg.Button('Reglas',button_color=('white','black'),key='reglas')],
+         [sg.Column(column()),sg.Column(columna_bolsa(60,0))],
+        [sg.Text(' '*10),but(letra_elegida(bolsa_fichas),1),but(letra_elegida(bolsa_fichas),2),but(letra_elegida(bolsa_fichas),3),but(letra_elegida(bolsa_fichas),4),but(letra_elegida(bolsa_fichas),5),but(letra_elegida(bolsa_fichas),6),but(letra_elegida(bolsa_fichas),7)],
         [sg.Button('Borrar',button_color=('black','white'),key='borrador'),sg.Button('Verificar',button_color=('white','red'),key='verifica')]]
 
 window = sg.Window('ScrabbleAR',layout)
@@ -291,99 +316,124 @@ fichas_usadas=[]
 tuplas_recien_usadas=[]
 fichas_recien_usadas=[]
 palabra=''
+fichas_jugador=[]
+for i in range(7):
+	fichas_jugador.append(window.FindElement(i+1))
+	print(i+1)
+#print(len(fichas_jugador))
+#for i in fichas_jugador:
+#	print(i.GetText())
+cont_cambio=3	
 while True:
+	
     event, values = window.Read()
     print(event,values)
     if event is None or 'tipo' == 'Exit':
         break
+        
+        
     elif event =='inicio' and listo==False:
         listo=True
         desicion=['computadora','usuario']
+        t = timer(3.0, timeout) 
+        t.start()
         eleccion=random.choice(desicion)
         print(eleccion)
         texto=window.FindElement('tur')
         texto.Update('Turno:'+eleccion)
         inicio=window.FindElement('inicio')
         inicio.Update('Posponer')
-
-    elif type(event)==tuple and not(ficha in fichas_usadas) and button_selected:
-        print(event)
-        elem=window.FindElement(event)
-
-        sumador_puntos_jugador=sumador_puntos_jugador+calcular_puntos(ficha,current_button_selected,bolsa_fichas)
-        if not(event in lista_tuplas_usadas):
+        
+        
+    if(listo==True): #si ya se apreto el boton iniciar se pueden utizar los otros botones del juego
+       if type(event)==int:
+            ficha=window.FindElement(event)
+            print('tipo:',type(ficha))
+            print('tipo:',ficha.GetText())
+            print(ficha.ButtonColor)
+            if not(ficha in fichas_usadas):
+               button_selected = True
+               current_button_selected=ficha.GetText()
+       
+       elif type(event)==tuple and not(ficha in fichas_usadas) and button_selected:
+            print(event)
             elem=window.FindElement(event)
-
-            print('imprimo el get texto')
-            print(elem.GetText())
-            indice, dic_letra_anterior, list_palabra, abajo, al_lado, continuar=comprobar_fichas(ficha,event,indice, dic_letra_anterior, list_palabra, abajo, al_lado)
-            print('salio')
-            if continuar== True:
-                comprobar(elem)
-                print('ficha.GetText():',ficha.GetText())
-                lista_tuplas_usadas.append(event)
-                tuplas_recien_usadas.append(event)#son los lugares recien ocupados, si la palabra no es correcta tengo que sacar de estos lugares lo escrito
-                fichas_usadas.append(ficha)
-                fichas_recien_usadas.append(ficha)#son las fichas elegidas ese turno por el usuario, las tengo que devolver en caso de que sea incorrecto
-                block_button(ficha)
-
-    elif type(event)==str and (event!='inicio') and (event!='conf') and (event!='verifica') and (event!='borrador') :
-        ficha=window.FindElement(event)
-        print('tipo:',type(ficha))
-        print(ficha.ButtonColor)
-
-        if not(ficha in fichas_usadas):
-            #Check_button(event)
-            button_selected = True
-            current_button_selected=event
-
-
-    elif event == 'verifica': #en el sg.text iria: no se encontro la palabra, es palabra o es adjetivo, es verbo. dependiendo del nivel y de lo que suceda
-
-        #####  lucia pasarle la palabra a pattern (list_palabra imprime mal) ###################################
-        print(list_palabra)
-        palabra=palabra.join(list_palabra)
-        print(palabra,'holaaaaaaaaaaa')
-        if (check_pattern(palabra,nivel_dificultad,conjunto_hard)):
-            acumulador_puntos_jugador+=sumador_puntos_jugador
+            sumador_puntos_jugador=sumador_puntos_jugador+calcular_puntos(ficha,current_button_selected,bolsa_fichas)
+            if not(event in lista_tuplas_usadas):
+                elem=window.FindElement(event)
+                print('imprimo el get texto')
+                print(elem.GetText())
+                indice, dic_letra_anterior, list_palabra, abajo, al_lado, continuar=comprobar_fichas(ficha,event,indice, dic_letra_anterior, list_palabra, abajo, al_lado)
+                print('salio')
+                if continuar== True:
+                    comprobar(elem)
+                    print('ficha.GetText():',ficha.GetText())
+                    lista_tuplas_usadas.append(event)
+                    tuplas_recien_usadas.append(event)#son los lugares recien ocupados, si la palabra no es correcta tengo que sacar de estos lugares lo escrito
+                    fichas_usadas.append(ficha)
+                    fichas_recien_usadas.append(ficha)#son las fichas elegidas ese turno por el usuario, las tengo que devolver en caso de que sea incorrecto
+                    block_button(ficha)
+        
+       elif event=='bolsa' and (cont_cambio>0):
+            for i in range(7):
+                fichas_jugador.append(window.FindElement(i+1))
+                print(i+1)
+            cambio=cf.creacion_ventana(fichas_jugador)
+            print('lista cambio:')
+            if len(cambio)>=1:
+               for i in cambio:
+                    ficha_cambio=window.FindElement(i)
+                    vieja=ficha_cambio
+                    ficha_cambio.Update(letra_elegida(bolsa_fichas,True,ficha_cambio))
+                    bolsa_fichas[0][vieja.GetText()][0] +=1 ###
+                    texto=window.FindElement('cant_cambio')
+               cont_cambio-=1
+               nuevo='('+(str(cont_cambio))+')'
+               texto.Update(nuevo)
+       
+       elif event == 'verifica':
+            print(list_palabra)
+            palabra=palabra.join(list_palabra)
+            print(palabra,'holaaaaaaaaaaa')
+            if (check_pattern(palabra,nivel_dificultad,conjunto_hard)):
+                acumulador_puntos_jugador+=sumador_puntos_jugador
+                sumador_puntos_jugador=0
+                print('Puntos jugador: '+str(int(acumulador_puntos_jugador)))
+                indice=-1
+                for i in fichas_recien_usadas:
+                    i.Update(letra_elegida(bolsa_fichas))
+                    Uncheck_button(i)
+                    if i in fichas_usadas:
+                        fichas_usadas.remove(i)  
+            else:
+                indice=-1
+                reinicio(fichas_recien_usadas,fichas_usadas,tuplas_recien_usadas,lista_tuplas_usadas)
+                sumador_puntos_jugador=0
+                i=0
+                dic_letra_anterior={}
+                list_palabra=[]
+                abajo=False
+                al_lado=False
+                continuar=True
+            tuplas_recien_usadas=[]
+            fichas_recien_usadas=[]
+        
+       elif event=='borrador': 
             sumador_puntos_jugador=0
-            print('Puntos jugador: '+str(int(acumulador_puntos_jugador)))
-            indice=-1
-            for i in fichas_recien_usadas:
-                 i.Update(letra_elegida(bolsa_fichas))
-                 Uncheck_button(i)
-                 if i in fichas_usadas:
-                     fichas_usadas.remove(i)
-
-        else:
+            i=0
+            dic_letra_anterior={}
+            list_palabra=[]
+            abajo=False
+            al_lado=False
+            continuar=True
             indice=-1
             reinicio(fichas_recien_usadas,fichas_usadas,tuplas_recien_usadas,lista_tuplas_usadas)
-            sumador_puntos_jugador=0
-
-        i=0
-        dic_letra_anterior={}
-        list_palabra=[]
-        abajo=False
-        al_lado=False
-        continuar=True
-
-        tuplas_recien_usadas=[]
-        fichas_recien_usadas=[]
-
+            tuplas_recien_usadas=[]
+            fichas_recien_usadas=[]   
+    
     elif event == 'reglas':
         print('holaaaaaaaaaaaaa')
         imprimir_reglas()
 
-    elif event=='borrador':
-        sumador_puntos_jugador=0
-        i=0
-        dic_letra_anterior={}
-        list_palabra=[]
-        abajo=False
-        al_lado=False
-        continuar=True
-        indice=-1
-        reinicio(fichas_recien_usadas,fichas_usadas,tuplas_recien_usadas,lista_tuplas_usadas)
-        tuplas_recien_usadas=[]
-        fichas_recien_usadas=[]
+window.close() 
   #hay que tener en cuenta que cuando borre no pierda el turno el jugador
