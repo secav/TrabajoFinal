@@ -435,5 +435,5 @@ while True:
         print('holaaaaaaaaaaaaa')
         imprimir_reglas()
 
-window.close() 
+window.Close() 
   #hay que tener en cuenta que cuando borre no pierda el turno el jugador
