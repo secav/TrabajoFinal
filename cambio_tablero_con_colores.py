@@ -91,6 +91,7 @@ def letrasjuntas(a, b):
 	return valido
 
 def comprobar(elem):
+	'''Comprueba si el casillero no tiene ninguna letra todavia, y en ese caso actualiza el casillero con el nuevo valor '''
 	print('texto:',elem.GetText())
 	if(elem.GetText()==''):
 		print('si es')
@@ -152,52 +153,6 @@ def calcular_puntos(elem,current_button_selected,bolsa):
 		puntos=bolsa[0][x][1]
 	return puntos
 
-def button(name,key ):
-	return (sg.Button(name,button_color=color_button,size=tam_button,key=key),name)
-def definir(inicio,ini,inicial):
-	posi=True
-	lista=[]
-	print(inicio)
-	if (inicio):
-		lista.append(ini.GetText())
-		valor=inicial+1
-		sig=window.FindElement(valor)
-		sumo=1
-		if(comprobar(sig,2)!=True):
-			valor=inicial+10
-			sig=window.FindElement(valor)
-			sumo=10
-			if(comprobar(sig,2)!=True):
-				posi=False
-			else:
-				lista.append(sig.GetText())
-		else:
-			lista.append(sig.GetText())
-		while(posi==True)and(valor+sumo<100):
-			print('while')
-			valor+=sumo
-			sig=window.FindElement(valor)
-			if(comprobar(sig,2)!=True):
-				posi=False
-			else:
-				lista.append(sig.GetText())
-		print('lista:',lista)
-		pal=''
-		for i in lista:
-			pal=pal+i
-		print(pal)
-		sentence=parse(pal).split()
-		for lis in sentence:
-			for k in lis:
-				if(k[1]== 'VB'):
-					return 'verbo'
-				elif (k[1]== 'NN'):
-					return 'sustantivo'
-				else:
-					return 'otro'
-
-	else:
-		return 'No se encontro palabra'
 
 def column():
 	'''Retorna las filas de butones con los colores '''
@@ -244,7 +199,7 @@ def columna_bolsa(seg,menos):
 	return layout
 
 def reinicio(fichas_recien_usadas,fichas_usadas,tuplas_recien_usadas,lista_tuplas_usadas):
-	'''Este metodo saca del tablero las letras que no cumplieron o que el usuario deseo borrar y permite volver a usar esas fichas  '''
+	'''Saca del tablero las letras que no cumplieron o que el usuario decidio borrar y permite volver a usar esas fichas  '''
 	for i in fichas_recien_usadas:
 		if i in fichas_usadas:
 			 print('ESTA',i.GetText())
@@ -344,7 +299,7 @@ while True:
                button_selected = True
                current_button_selected=ficha.GetText()
        
-       elif type(event)==tuple and not(ficha in fichas_usadas) and button_selected:
+       elif type(event)==tuple  and button_selected and not(ficha in fichas_usadas):
             print(event)
             elem=window.FindElement(event)
             sumador_puntos_jugador=sumador_puntos_jugador+calcular_puntos(ficha,current_button_selected,bolsa_fichas)
