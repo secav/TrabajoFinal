@@ -14,8 +14,3 @@ def imprimir_reglas():
             ]
     window = sg.Window('Reglas',layout)
     event, values = window.Read()
-#    while true:
-        
-#    if event == 'volver':
-#        break
-#imprimir_reglas()
