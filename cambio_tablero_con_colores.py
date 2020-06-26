@@ -69,32 +69,25 @@ def letrasjuntas(a, b):
 	a=a.lower()
 	b=b.lower()
 	list_letras_juntas=[]
-	dos_consonantes=['pr','pl','pt','br','bl','bs','tr','mp','mb','dr','dj','dy','cr','ct','ch','fr','fl','gr','gl']
+	dos_consonantes=['pr','pl','pt','br','bl','bs','tr','mp','mb','dr','dj','dy','cr','ct','ch','cl','fr','fl','gr','gl']
 	list_letras_juntas.append(a)
 	list_letras_juntas.append(b)
 	juntas=juntas.join(list_letras_juntas)
-	print(juntas)
 	valido=False
 	if es_vocal(a):
 		valido=True
-		print('vocal')
 	elif not(es_vocal(a)) and (es_vocal(b)):
 		if not(juntas in mixtas):
 			valido=True
-			print('mixto')
 	else:
 		if (a=='r')or(a=='s'):
 			valido=True
-			print('r o s')
 		elif (a=='n')and((b!='p')or(b!='b')):
 			valido=True
-			print('excepcion de la n')
 		elif juntas in dos_consonantes:
 			valido=True
-			print('dos consonantes')
 		else:
 			valido=False
-			print('no valido')
 	return valido
 
 def comprobar(elem):
@@ -111,7 +104,11 @@ def comprobar(elem):
 		elem.Update(x)
 
 def comprobar_fichas(elem,event, indice, dic_letra_anterior, list_palabra, abajo, al_lado):
-	'''esta funcion ve si se van poniendo las letras consecutivamente y las guarda en una lista '''
+	'''esta funcion ve si se van poniendo las letras consecutivamente, ya sea vertical u horizontal, y las guarda en una lista 
+	se le ingresa el elemento para conseguir la letra colocada, el evento(la tupla donde se coloco la letra), un indice que indica cuantas letras
+	se ingresaron hasta ese momento, un diccionario que guarda la informacion de la letra que fue ingresada antes de la actual, una lista donde se guardan
+	las letras que va ingresando el usuario(para luego obtener la palabra formada, y 2 variables booleanas que indican si la palabra esta siendo colocada
+	vertical u horizontalmente'''
 	continuar=True
 	indice=indice+1
 	if indice==0:
@@ -119,7 +116,6 @@ def comprobar_fichas(elem,event, indice, dic_letra_anterior, list_palabra, abajo
 		dic_letra_anterior['tup']=event
 		dic_letra_anterior['letra']=elem.GetText()
 		list_palabra.append(dic_letra_anterior['letra'])
-		print('primera letra', elem.GetText())
 	elif (event[0]==dic_letra_anterior['tup'][0]) and (event[1]==dic_letra_anterior['tup'][1]+1) and (abajo==False) and (letrasjuntas(dic_letra_anterior['letra'],elem.GetText())):
 		al_lado=True
 		dic_letra_anterior['pos']=indice
@@ -127,7 +123,6 @@ def comprobar_fichas(elem,event, indice, dic_letra_anterior, list_palabra, abajo
 		dic_letra_anterior['letra']=elem.GetText()
 		list_palabra.append(dic_letra_anterior['letra'])
 		boton_confirmar=True
-		print('letra valida al costado')
 	elif (event[0]==dic_letra_anterior['tup'][0]+1) and (event[1]==dic_letra_anterior['tup'][1]) and (al_lado==False) and (letrasjuntas(dic_letra_anterior['letra'],elem.GetText())):
 		abajo=True
 		dic_letra_anterior['pos']=indice
@@ -135,13 +130,9 @@ def comprobar_fichas(elem,event, indice, dic_letra_anterior, list_palabra, abajo
 		dic_letra_anterior['letra']=elem.GetText()
 		list_palabra.append(dic_letra_anterior['letra'])
 		boton_confirmar=True
-		print('letra valida abajo')
 	else:
 		indice=indice-1
 		continuar=False
-		print('letra lejos o no valida')
-#	dic_letra_anterior=dic_letras.copy()
-	print(dic_letra_anterior)
 	return indice, dic_letra_anterior, list_palabra, abajo, al_lado, continuar
 
 def calcular_puntos(elem,current_button_selected,bolsa):
@@ -320,9 +311,7 @@ fichas_jugador=[]
 for i in range(7):
 	fichas_jugador.append(window.FindElement(i+1))
 	print(i+1)
-#print(len(fichas_jugador))
-#for i in fichas_jugador:
-#	print(i.GetText())
+
 cont_cambio=3	
 while True:
 	
@@ -432,7 +421,6 @@ while True:
             fichas_recien_usadas=[]   
     
     elif event == 'reglas':
-        print('holaaaaaaaaaaaaa')
         imprimir_reglas()
 
 window.Close() 
