@@ -153,67 +153,78 @@ def imprimir_tablero():
     	else:
     		puntos=bolsa[0][x][1]
     	return puntos
+    def column_tablero(nivel='facil'):
+     	'''Retorna las filas de butones con los colores '''
+     	sin_color=('black','white')
+     	descuento=('white','red')
+     	premio=('white','blue')
+     	relleno1=('black','yellow')
+     	relleno2=('black','orange')
+     	rojo=[(14,0),(13,1),(12,2),(11,3),(10,4),(9,5),(5,9),(4,10),(3,11),(2,12),(1,13),(0,14)]
+     	azul=[(6,6),(8,6),(6,8),(8,8),(6,3),(8,3),(3,6),(3,8),(6,11),(8,11),(11,6),(11,8),(14,11),(14,3),(0,11),(0,3),(11,14),(3,14),(3,0),(11,0)]
+     	naranja=[(5,2),(4,1),(9,2),(10,1),(5,12),(4,13),(9,12),(10,13),(13,4),(12,5),(12,9),(13,10),(2,5),(1,4),(2,9),(1,10)]
+     	tablero=[]
+     	datos_ext=[(14,7),(0,7),(7,14),(7,0)]
+     	datos_int=[(4,7),(7,10),(10,7),(7,4)]
+     	if(nivel=='facil'):
+     		azul.extend(datos_ext)
+     		azul.extend(datos_int)
+     	elif(nivel=='medio'):
+     		rojo.extend(datos_ext)
+     		azul.extend(datos_int)
+     	elif(nivel=='dificil'):
+      		rojo.extend(datos_ext)
+      		rojo.extend(datos_int)		
+	  	
+     	for i in range(15):
+     		row = []
+     		for j in range(15):
+     			if((i==7)and(j==7)):
+     				color=relleno1
+     			elif(i,j)in naranja:
+     				color=relleno2
+     			elif(i,j)in azul:
+     				color=premio
+     			elif(i==j)or(i,j)in rojo:
+     				color=descuento
+     			else:
+     				color=sin_color
+     			row.append(sg.Button('',  size=(3, 1),button_color=color, pad=(0, 0), key=(i,j)))
+     		tablero.append(row)
 
-
-    def column(nivel='facil'):
-    	'''Retorna las filas de butones con los colores '''
-    	sin_color=('black','white')
-    	descuento=('white','red')
-    	premio=('white','blue')
-    	relleno1=('black','yellow')
-    	relleno2=('black','orange')
-    	rojo=[(14,0),(13,1),(12,2),(11,3),(10,4),(9,5),(5,9),(4,10),(3,11),(2,12),(1,13),(0,14)]
-    	azul=[(6,6),(8,6),(6,8),(8,8),(6,3),(8,3),(3,6),(3,8),(6,11),(8,11),(11,6),(11,8),(14,11),(14,3),(0,11),(0,3),(11,14),(3,14),(3,0),(11,0)]
-    	naranja=[(5,2),(4,1),(9,2),(10,1),(5,12),(4,13),(9,12),(10,13),(13,4),(12,5),(12,9),(13,10),(2,5),(1,4),(2,9),(1,10)]
-    	tablero=[]
-        datos_ext=[(14,7),(0,7),(7,14),(7,0)]
-        datos_int=[(4,7),(7,10),(10,7),(7,4)]
-        if(nivel=='facil'):
-            azul.extend(datos_ext)
-            azul.extend(datos_int)
-        elif(nivel=='medio'):
-            rojo.extend(datos_ext)
-            azul.extend(datos_int)
-        elif(nivel=='dificil'):
-            rojo.extend(datos_ext)
-            rojo.extend(datos_int)
-    	for i in range(15):
-    		row = []
-    		for j in range(15):
-    			if((i==7)and(j==7))or(i,j)in amarillo:
-    				color=relleno1
-    			elif(i,j)in naranja:
-    				color=relleno2
-    			elif(i,j)in azul:
-    				color=premio
-    			elif(i==j)or(i,j)in rojo:
-    				color=descuento
-    			else:
-    				color=sin_color
-    			row.append(sg.Button('',  size=(3, 1),button_color=color, pad=(0, 0), key=(i,j)))
-    		tablero.append(row)
-
-    	return tablero
+     	return tablero
 
 
 
 
 
     def columna_bolsa(seg,menos):
-    	layout=[[sg.Text('Puntaje computadora')],
-            [sg.Text('0', key='text_pun_comp')],
+    	layout=[
     	[sg.T('Tiempo ')],
     	[sg.T(seg)],
     	[sg.T(' '  * 10)],
     	[sg.T(' '  * 10)],
-    	[sg.Button(image_filename="bolsa_roja.png",image_size=(100, 100),key="bolsa", border_width=0)],
+    	[sg.Button(image_filename="bolsachica.png",image_size=(100, 100),key="bolsa", border_width=0)],
     	[sg.Text('Presione aqui para')],
-    	[sg.Text('cambiar las fichas'),sg.Text('(3)',key='cant_cambio')],
-    	[sg.Text('Puntaje jugador')],
-            [sg.Text('0', key='text_pun_jug')],
+    	[sg.Text('cambiar las fichas'),sg.Text('(3)',key='cant_cambio')]]
+    	return layout
+    	
+    def columna_puntos():
+        layout=[[sg.Text('Puntaje computadora')],
+        [sg.Text('0', key='text_pun_comp')],
+        [sg.T(' ')],
+        [sg.T(' ')],
+        [sg.Text('Puntaje jugador')],
+        [sg.Text('0', key='text_pun_jug')],
         [sg.Text('Puntaje palabra actual')],
         [sg.Text('0',key='text_pun_pal')]]
-    	return layout
+        return layout
+        
+        
+        
+    	
+		
+		
     
     def columna_atril_computadora():
         layout=[[but(''),but(''),but(''),but(''),but(''),but(''),but('')]]
@@ -266,13 +277,13 @@ def imprimir_tablero():
     tam_celda =25
     color_button = ('white','green')
     tam_button = 3,1
-    but = lambda name,clave : sg.Button(name,button_color=color_button,size=tam_button,key=clave)
+    but = lambda name,clave=None : sg.Button(name,button_color=color_button,size=tam_button,key=clave)
     layout = [
-             [sg.Button('INICIAR',button_color=('white','black'),key='inicio'),sg.Button('Configuracion',button_color=('white','black'),key='conf'),sg.Button('Ranking',button_color=('white','black'),key='rank'),sg.Button('Reglas',button_color=('white','black'),key='reglas')],
+             [sg.Button('INICIAR',button_color=('white','black'),key='inicio',size=(12,None)),sg.Button('Ranking',button_color=('white','black'),key='rank'),sg.Button('Reglas',button_color=('white','black'),key='reglas')],
              [sg.Text('Turno:                 ',key='tur')],
-             [sg.Text(' '*30),sg.Column(columna_atril_computadora(),background_color='Black',size=(215,45 ))],]
-             [sg.Column(column()),sg.Column(columna_bolsa(60,0))],
-            [sg.Text(' '*30),sg.Column(columna_atril_jugador(),background_color='Black',size=(215,45 ))],
+             [sg.Text(' '*60),sg.Column(columna_atril_computadora(),background_color='Black',size=(290,45 ))],
+             [sg.Column(columna_puntos()),sg.Column(column_tablero()),sg.Column(columna_bolsa(60,0))],
+            [sg.Text(' '*60),sg.Column(columna_atril_jugador(),background_color='Black',size=(290,45 ))],
             [sg.Button('Borrar',button_color=('black','white'),key='borrador'),sg.Button('Verificar',button_color=('white','red'),key='verifica')]]
 
     window = sg.Window('ScrabbleAR',layout)
@@ -398,7 +409,7 @@ def imprimir_tablero():
                 fichas_recien_usadas=[]
 
            elif event=='borrador':
-                sumador_puntos_jugador=0
+                sumador_puntos_jugador=but
                 text=window.FindElement('text_pun_pal')
                 text.Update(sumador_puntos_jugador)
                 i=0
@@ -414,8 +425,6 @@ def imprimir_tablero():
 
         elif event == 'reglas':
             imprimir_reglas()
-        if event=='conf':
-            imprimir_configuraciones()
 
         if event=='rank':
             imprimir_rankin(acumulador_puntos_jugador,'difi')
