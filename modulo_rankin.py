@@ -3,6 +3,7 @@ import json
 import time
 
 def imprimir_rankin(puntaje_ult, nivel_ult):
+
     '''imprime la ventana que muestra el top ten del juego con la fecha, el puntaje y el nivel en el cual se lograron.
     Se le ingresa de la ventana de tablero el puntaje de la ultima partida y el nivel en el cual se jugo. Si ese puntaje entra en
     el top ten lo guarda en un diccionario que despues sera agregado en el archivo rankin.txt que es donde se guarda toda esta
@@ -12,6 +13,7 @@ def imprimir_rankin(puntaje_ult, nivel_ult):
         '''ordena la lista de datos segun el puntaje de mayor a menor'''
         aux_lista=sorted(aux_lista, key= lambda x:x[1], reverse=True)
         return aux_lista
+
 
     archivo= open('rankin.txt','r')
     lista_puntajes=[]
@@ -65,7 +67,7 @@ def imprimir_rankin(puntaje_ult, nivel_ult):
 
     while True:
         evento,valores = window.Read()
-        print(evento,valores)
+#        print(evento,valores)
 
         if evento=='Volver':
             archivo=open('rankin.txt','w')
@@ -76,4 +78,3 @@ def imprimir_rankin(puntaje_ult, nivel_ult):
             break
 
     window.Close()
-#imprimir_rankin(10, 'difi')
