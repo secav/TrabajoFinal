@@ -7,10 +7,18 @@ def imprimir_reglas():
     tiene un boton para volver al tablero'''
 
     reglas=open('arch_reglas.txt','r')
-    imprimir= lambda linea: reglas.read()
 
     layout = [[sg.Text(reglas.read())],
             [sg.Button('Volver',button_color=('white','black'),key='volver')]
             ]
-    window = sg.Window('Reglas',layout)
+    window = sg.Window('Reglas').Layout(layout)
     event, values = window.Read()
+    reglas.close()
+    while True:
+
+        if event == 'volver':
+            break
+        elif event == None:
+            break
+
+    window.close()
