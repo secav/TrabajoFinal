@@ -155,18 +155,28 @@ def imprimir_tablero():
     	return puntos
 
 
-    def column():
+    def column(nivel='facil'):
     	'''Retorna las filas de butones con los colores '''
     	sin_color=('black','white')
     	descuento=('white','red')
     	premio=('white','blue')
     	relleno1=('black','yellow')
     	relleno2=('black','orange')
-    	rojo=[(14,0),(13,1),(12,2),(11,3),(10,4),(9,5),(5,9),(4,10),(3,11),(2,12),(1,13),(0,14),(14,7),(0,7),(7,14),(7,0)]
-    	azul=[(6,6),(8,6),(6,8),(8,8),(6,3),(7,4),(8,3),(3,6),(4,7),(3,8),(7,10),(6,11),(8,11),(11,6),(10,7),(11,8),(14,11),(14,3),(0,11),(0,3),(11,14),(3,14),(3,0),(11,0)]
-    	amarillo=[(13,4),(12,5),(12,9),(13,10),(2,5),(1,4),(2,9),(1,10)]
-    	naranja=[(5,2),(4,1),(9,2),(10,1),(5,12),(4,13),(9,12),(10,13)]
+    	rojo=[(14,0),(13,1),(12,2),(11,3),(10,4),(9,5),(5,9),(4,10),(3,11),(2,12),(1,13),(0,14)]
+    	azul=[(6,6),(8,6),(6,8),(8,8),(6,3),(8,3),(3,6),(3,8),(6,11),(8,11),(11,6),(11,8),(14,11),(14,3),(0,11),(0,3),(11,14),(3,14),(3,0),(11,0)]
+    	naranja=[(5,2),(4,1),(9,2),(10,1),(5,12),(4,13),(9,12),(10,13),(13,4),(12,5),(12,9),(13,10),(2,5),(1,4),(2,9),(1,10)]
     	tablero=[]
+        datos_ext=[(14,7),(0,7),(7,14),(7,0)]
+        datos_int=[(4,7),(7,10),(10,7),(7,4)]
+        if(nivel=='facil'):
+            azul.extend(datos_ext)
+            azul.extend(datos_int)
+        elif(nivel=='medio'):
+            rojo.extend(datos_ext)
+            azul.extend(datos_int)
+        elif(nivel=='dificil'):
+            rojo.extend(datos_ext)
+            rojo.extend(datos_int)
     	for i in range(15):
     		row = []
     		for j in range(15):
@@ -204,6 +214,14 @@ def imprimir_tablero():
         [sg.Text('Puntaje palabra actual')],
         [sg.Text('0',key='text_pun_pal')]]
     	return layout
+    
+    def columna_atril_computadora():
+        layout=[[but(''),but(''),but(''),but(''),but(''),but(''),but('')]]
+        return layout
+    
+    def columna_atril_jugador():
+        layout=[[but(letra_elegida(bolsa_fichas),1),but(letra_elegida(bolsa_fichas),2),but(letra_elegida(bolsa_fichas),3),but(letra_elegida(bolsa_fichas),4),but(letra_elegida(bolsa_fichas),5),but(letra_elegida(bolsa_fichas),6),but(letra_elegida(bolsa_fichas),7)]]
+        return layout
 
     def reinicio(fichas_recien_usadas,fichas_usadas,tuplas_recien_usadas,lista_tuplas_usadas):
     	'''Saca del tablero las letras que no cumplieron o que el usuario decidio borrar y permite volver a usar esas fichas  '''
@@ -243,16 +261,18 @@ def imprimir_tablero():
     continuar=True
     dic_letras={}
     dic_letra_anterior={}
-
+    sg.theme('LightBrown1')
 
     tam_celda =25
     color_button = ('white','green')
     tam_button = 3,1
     but = lambda name,clave : sg.Button(name,button_color=color_button,size=tam_button,key=clave)
     layout = [
-             [sg.Button('INICIAR',button_color=('white','black'),key='inicio'),sg.Text('Turno:                          ',key='tur'),sg.Button('Configuracion',button_color=('white','black'),key='conf'),sg.Button('Ranking',button_color=('white','black'),key='rank'),sg.Button('Reglas',button_color=('white','black'),key='reglas')],
+             [sg.Button('INICIAR',button_color=('white','black'),key='inicio'),sg.Button('Configuracion',button_color=('white','black'),key='conf'),sg.Button('Ranking',button_color=('white','black'),key='rank'),sg.Button('Reglas',button_color=('white','black'),key='reglas')],
+             [sg.Text('Turno:                 ',key='tur')],
+             [sg.Text(' '*30),sg.Column(columna_atril_computadora(),background_color='Black',size=(215,45 ))],]
              [sg.Column(column()),sg.Column(columna_bolsa(60,0))],
-            [sg.Text(' '*10),but(letra_elegida(bolsa_fichas),1),but(letra_elegida(bolsa_fichas),2),but(letra_elegida(bolsa_fichas),3),but(letra_elegida(bolsa_fichas),4),but(letra_elegida(bolsa_fichas),5),but(letra_elegida(bolsa_fichas),6),but(letra_elegida(bolsa_fichas),7)],
+            [sg.Text(' '*30),sg.Column(columna_atril_jugador(),background_color='Black',size=(215,45 ))],
             [sg.Button('Borrar',button_color=('black','white'),key='borrador'),sg.Button('Verificar',button_color=('white','red'),key='verifica')]]
 
     window = sg.Window('ScrabbleAR',layout)
