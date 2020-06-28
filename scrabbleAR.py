@@ -1,25 +1,25 @@
 import PySimpleGUI as sg
-import ajustes
+from modulo_configuraciones import imprimir_configuraciones
+from tablero_version_4 import imprimir_tablero
 
 
-#Layout de menu
-layout_menu=[
-[sg.Text('ScrabbleAR')],
-[sg.Button('Jugar')],
-[sg.Button('Configurar')],
-[sg.Button('Salir')]
-]
+''' Este codigo imprime la ventana de Menu principal del juego con 2 botones: el que abre el tablero e inicia una partida
+y el que abre la ventana para configurar el juego'''
 
-window = sg.Window('Menu',size=(250,250)).Layout(layout_menu)
-event = window.Read()
+layout=[[sg.Button('Iniciar Partida', key='partida')],
+        [sg.Button('Configuraciones', key='conf')],
+        [sg.Button('Salir')]]
+
+window=sg.Window('Menu Principal').Layout(layout)
 
 while True:
-    if event[0] == 'Jugar':
-        print('A hacer')
-        #ABRIR JUEGO
-    elif event[0] == 'Configurar':
-        ajustes.correr()
-        event = window.Read()
-    else:
-        window.Close()
+    evento, valor = window.Read()
+    if evento == 'partida':
+        imprimir_tablero()
+
+    if evento == 'conf':
+        imprimir_configuraciones()
+    if evento in ('Salir', None):
         break
+
+window.close()
