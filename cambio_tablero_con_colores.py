@@ -272,14 +272,14 @@ def imprimir_tablero():
     continuar=True
     dic_letras={}
     dic_letra_anterior={}
-    sg.theme('LightBrown1')
+    
 
     tam_celda =25
     color_button = ('white','green')
     tam_button = 3,1
     but = lambda name,clave=None : sg.Button(name,button_color=color_button,size=tam_button,key=clave)
     layout = [
-             [sg.Button('INICIAR',button_color=('white','black'),key='inicio',size=(12,None)),sg.Button('Ranking',button_color=('white','black'),key='rank'),sg.Button('Reglas',button_color=('white','black'),key='reglas')],
+             [sg.Button('INICIAR',key='inicio',size=(12,None)),sg.Button('Ranking',key='rank'),sg.Button('Reglas',key='reglas')],
              [sg.Text('Turno:                 ',key='tur')],
              [sg.Text(' '*60),sg.Column(columna_atril_computadora(),background_color='Black',size=(290,45 ))],
              [sg.Column(columna_puntos()),sg.Column(column_tablero()),sg.Column(columna_bolsa(60,0))],
