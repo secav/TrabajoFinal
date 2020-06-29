@@ -12,15 +12,15 @@ layout=[[sg.Text('Menu Principal')],
         [sg.Button('Salir')]]
 
 window=sg.Window('ScrableAr').Layout(layout)
-
-while True:
-    evento, valor = window.Read()
-    if evento == 'partida':
-        imprimir_tablero()
-
-    if evento == 'conf':
-        imprimir_configuraciones()
-    if evento in ('Salir', None):
-        break
-
-window.close()
+try:
+	while True:
+		evento, valor = window.Read()
+		if evento == 'partida':
+			imprimir_tablero()
+		if evento == 'conf':
+			imprimir_configuraciones()
+		if evento in ('Salir', None):
+			break
+	window.close()
+except FileNotFoundError:
+	sg.Popup('Archivo necesario no encontrado')

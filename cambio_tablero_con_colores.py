@@ -154,7 +154,7 @@ def imprimir_tablero():
     		puntos=bolsa[0][x][1]
     	return puntos
     def column_tablero(nivel='facil'):
-     	'''Retorna las filas de butones con los colores '''
+     	'''Retorna el diseño del tablero '''
      	sin_color=('black','white')
      	descuento=('white','red')
      	premio=('white','blue')
@@ -199,6 +199,7 @@ def imprimir_tablero():
 
 
     def columna_bolsa(seg,menos):
+    	'''Devuelve el diseño del tiempo y la bolsa de fichas que se le muestran al jugador'''
     	layout=[
     	[sg.T('Tiempo ')],
     	[sg.T(seg)],
@@ -210,6 +211,7 @@ def imprimir_tablero():
     	return layout
     	
     def columna_puntos():
+        '''Devuelve el diseño de los puntajes, el de la computadora y el del jugador '''
         layout=[[sg.Text('Puntaje computadora')],
         [sg.Text('0', key='text_pun_comp')],
         [sg.T(' ')],
@@ -227,10 +229,12 @@ def imprimir_tablero():
 		
     
     def columna_atril_computadora():
+        '''Devuelve el diseño del atril de la computadora '''
         layout=[[but(''),but(''),but(''),but(''),but(''),but(''),but('')]]
         return layout
     
     def columna_atril_jugador():
+        '''Devuelve el diseño del atril del jugador con sus fichas correspondientes '''
         layout=[[but(letra_elegida(bolsa_fichas),1),but(letra_elegida(bolsa_fichas),2),but(letra_elegida(bolsa_fichas),3),but(letra_elegida(bolsa_fichas),4),but(letra_elegida(bolsa_fichas),5),but(letra_elegida(bolsa_fichas),6),but(letra_elegida(bolsa_fichas),7)]]
         return layout
 
@@ -279,7 +283,7 @@ def imprimir_tablero():
     tam_button = 3,1
     but = lambda name,clave=None : sg.Button(name,button_color=color_button,size=tam_button,key=clave)
     layout = [
-             [sg.Button('INICIAR',key='inicio',size=(12,None)),sg.Button('Ranking',key='rank'),sg.Button('Reglas',key='reglas')],
+             [sg.Button('INICIAR',key='inicio',size=(12,None)),sg.Button('Ranking',key='rank'),sg.Button('Reglas',key='reglas'),sg.Button('Terminar juego',key='terminar')],
              [sg.Text('Turno:                 ',key='tur')],
              [sg.Text(' '*60),sg.Column(columna_atril_computadora(),background_color='Black',size=(290,45 ))],
              [sg.Column(columna_puntos()),sg.Column(column_tablero()),sg.Column(columna_bolsa(60,0))],
@@ -428,6 +432,8 @@ def imprimir_tablero():
 
         if event=='rank':
             imprimir_rankin(acumulador_puntos_jugador,'difi')
+        if(event=='terminar'):
+             break
 
 
     window.Close()
