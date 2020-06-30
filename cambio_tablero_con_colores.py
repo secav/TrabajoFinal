@@ -7,6 +7,8 @@ import cambio_fichas as cf
 from threading import Timer as timer
 from modulo_configuraciones import imprimir_configuraciones
 from modulo_rankin import imprimir_rankin
+from itertools import permutations
+from time import sleep
 
 def imprimir_tablero():
     def check_pattern(palabra,nivel,conjunto_dificil):
@@ -14,7 +16,6 @@ def imprimir_tablero():
     	palabra=palabra.lower()
     	if (palabra in spelling) or (palabra in lexicon):
     		tipo_palabra=tag(palabra)[0][1]
-    		print(tipo_palabra)
     		if nivel=='facil':
     			return True
     		elif (nivel=='medio') and (tipo_palabra=='VB' or tipo_palabra=='NN'):
@@ -153,6 +154,7 @@ def imprimir_tablero():
     	else:
     		puntos=bolsa[0][x][1]
     	return puntos
+
     def column_tablero(nivel='facil'):
      	'''Retorna el diseño del tablero '''
      	sin_color=('black','white')
@@ -253,6 +255,40 @@ def imprimir_tablero():
     def timeout():
     	print('fin del juego')
 
+    def convertTuple(tup):
+        str =  ''.join(tup) 
+        return str
+    def palabra_pc(letras_pc,bolsa_fichas,dificultad,conj_dificil):
+        '''La funcion recibe las fichas de la computadora, toma entre 3 y 7 letras y las permuta hasta encontrar una palabra. Luego retorna las fichas de la palabra en una lista y toma nuevas fichas'''
+        palabra_encontrada=False
+        cant_letras=[3,4,5,6,7]
+        while palabra_encontrada==False:
+            i=random.choice(cant_letras)
+            cant_letras.remove(i)
+            print(cant_letras)
+            letras_permutadas = permutations(letras_pc,i)
+            for x in letras_permutadas:
+                lista_palabra=list(x)
+                x=convertTuple(x).lower() 
+                if check_pattern(x,dificultad,conj_dificil):
+                    palabra=x
+                    palabra_encontrada=True
+                    break
+            # if not(cant_letras):
+                # print('no existen palabras')   #hacer excepcion
+                # break
+        print('palabra de la pc= ',palabra)
+        pal_len=len(palabra)
+        for x in lista_palabra:
+            letras_pc.remove(x)
+        for x in range(pal_len):
+            letras_pc.append(letra_elegida(bolsa_fichas))
+        print(letras_pc)
+        print(lista_palabra)
+        return lista_palabra
+
+
+
 
     #programa principal:
 
@@ -295,6 +331,7 @@ def imprimir_tablero():
     listo=False
     acumulador_puntos_jugador=0
     sumador_puntos_jugador=0
+    acumulador_puntos_pc=0
     button_selected = False
     current_button_selected = ''
     Check_button = lambda x: window.FindElement(x).Update(button_color=('black','yellow'))
@@ -305,6 +342,9 @@ def imprimir_tablero():
     fichas_recien_usadas=[]
     palabra=''
     fichas_jugador=[]
+    fichas_computadora=[]
+    for i in range(7):
+        fichas_computadora.append(letra_elegida(bolsa_fichas))
     for i in range(7):
     	fichas_jugador.append(window.FindElement(i+1))
     	print(i+1)
@@ -317,22 +357,21 @@ def imprimir_tablero():
         if event is None or 'tipo' == 'Exit':
             break
 
-
         elif event =='inicio' and listo==False:
             listo=True
-            desicion=['computadora','usuario']
-            t = timer(3.0, timeout)
-            t.start()
-            eleccion=random.choice(desicion)
-            print(eleccion)
+            #desicion=['computadora','usuario']  #Ver despues en discord
+            # t = timer(3.0, timeout)
+            # t.start()
+            turno_quien='usuario'
             texto=window.FindElement('tur')
-            texto.Update('Turno:'+eleccion)
+            texto.Update('Turno:'+turno_quien)
             inicio=window.FindElement('inicio')
             inicio.Update('Posponer')
 
 
         if(listo==True): #si ya se apreto el boton iniciar se pueden utizar los otros botones del juego
-           if type(event)==int:
+                                      
+            if type(event)==int:
                 ficha=window.FindElement(event)
                 print('tipo:',type(ficha))
                 print('tipo:',ficha.GetText())
@@ -341,10 +380,11 @@ def imprimir_tablero():
                    button_selected = True
                    current_button_selected=ficha.GetText()
 
-           elif type(event)==tuple  and button_selected and not(ficha in fichas_usadas):
+            elif type(event)==tuple  and button_selected and not(ficha in fichas_usadas):
                 print(event)
                 elem=window.FindElement(event)
-                sumador_puntos_jugador=sumador_puntos_jugador+calcular_puntos(ficha,current_button_selected,bolsa_fichas)
+                puntos_la_ficha=calcular_puntos(elem,current_button_selected,bolsa_fichas)
+                sumador_puntos_jugador=sumador_puntos_jugador+puntos_la_ficha
                 text=window.FindElement('text_pun_pal')
                 text.Update(sumador_puntos_jugador)
                 if not(event in lista_tuplas_usadas):
@@ -362,28 +402,34 @@ def imprimir_tablero():
                         fichas_recien_usadas.append(ficha)#son las fichas elegidas ese turno por el usuario, las tengo que devolver en caso de que sea incorrecto
                         block_button(ficha)
 
-           elif event=='bolsa' and (cont_cambio>0):
+            elif event=='bolsa' and (cont_cambio>0):
                 for i in range(7):
                     fichas_jugador.append(window.FindElement(i+1))
                     print(i+1)
                 cambio=cf.creacion_ventana(fichas_jugador)
                 print('lista cambio:')
                 if len(cambio)>=1:
-                   for i in cambio:
+                    for i in cambio:
                         ficha_cambio=window.FindElement(i)
                         vieja=ficha_cambio
                         ficha_cambio.Update(letra_elegida(bolsa_fichas,True,ficha_cambio))
                         bolsa_fichas[0][vieja.GetText()][0] +=1 ###
                         texto=window.FindElement('cant_cambio')
-                   cont_cambio-=1
-                   nuevo='('+(str(cont_cambio))+')'
-                   texto.Update(nuevo)
+                    cont_cambio-=1
+                    nuevo='('+(str(cont_cambio))+')'
+                    texto.Update(nuevo)	               
 
-           elif event == 'verifica':
+            elif event == 'verifica':
                 print(list_palabra)
                 palabra=palabra.join(list_palabra)
     #            print(palabra,'holaaaaaaaaaaa')
+                print('acaaaaaaaaaaa')
+                print(check_pattern(palabra,nivel_dificultad,conjunto_hard))
+                print(palabra)
                 if (check_pattern(palabra,nivel_dificultad,conjunto_hard)):
+                    turno_quien='computadora'
+                    texto=window.FindElement('tur')
+                    texto.Update('Turno:'+turno_quien)												
                     acumulador_puntos_jugador+=sumador_puntos_jugador
                     text=window.FindElement('text_pun_jug')
                     text.Update(acumulador_puntos_jugador)
@@ -397,6 +443,88 @@ def imprimir_tablero():
                         Uncheck_button(i)
                         if i in fichas_usadas:
                             fichas_usadas.remove(i)
+                    ###################################turno pc
+                    sleep(1)
+                    print(fichas_computadora)
+                    a_poner=palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard)
+                    palabra_puesta=False
+                    while palabra_puesta==False:
+                        posx_inicio=random.randrange(15)
+                        posy_inicio=random.randrange(15)
+                        boton_inicio=window.FindElement((posx_inicio,posy_inicio))
+                        if boton_inicio.GetText()=='':
+                            que_sentido=random.choice(['derecha','abajo'])
+                            print(que_sentido)
+                            se_puede=False
+                            der=True
+                            izq=True
+                            while (der or izq) and palabra_puesta==False:
+                                print('while')
+                                print(str(posy_inicio))
+                                print(str(posx_inicio))
+                                if que_sentido=='abajo':
+                                    print('abj')
+                                    largo_palabra_pc=len(a_poner)
+                                    print(largo_palabra_pc)
+                                    if (posx_inicio+largo_palabra_pc-1)<15:
+                                        print('entro')
+                                        posx_aux=posx_inicio
+                                        for i in range(len(a_poner)-1):
+                                            print('i es '+str(i))
+                                            boton_aux=window.FindElement((posx_aux+i+1,posy_inicio))
+                                            print(boton_aux.GetText())
+                                            if boton_aux.GetText()!='':
+                                                que_sentido='derecha'
+                                                abj=False
+                                                break
+                                            elif i == len(a_poner)-2:
+                                                se_puede=True
+                                    else:
+                                        abj=False
+                                        que_sentido='derecha'
+                                    print(se_puede)
+                                    if se_puede:
+                                        boton_inicio.Update(text=a_poner[0])
+                                        acumulador_puntos_pc=acumulador_puntos_pc+calcular_puntos(boton_inicio,a_poner[0],bolsa_fichas)
+                                        i=0
+                                        for x in a_poner[1:]:
+                                            i+=1
+                                            boton_aux=window.FindElement((posx_inicio+i,posy_inicio))
+                                            boton_aux.Update(text=x)
+                                            acumulador_puntos_pc=acumulador_puntos_pc+calcular_puntos(boton_aux,x,bolsa_fichas)
+                                        palabra_puesta=True           
+                                elif que_sentido=='derecha':
+                                    print('der')
+                                    largo_palabra_pc=len(a_poner)
+                                    if (posy_inicio+largo_palabra_pc-1) < 15:
+                                        posy_aux=posy_inicio
+                                        for i in range(len(a_poner)-1):
+                                            boton_aux=window.FindElement((posx_inicio,posy_aux+i+1))
+                                            if boton_aux.GetText()!='':
+                                                que_sentido='abajo'
+                                                der=False
+                                                break                                    
+                                            elif i == len(a_poner)-2:
+                                                se_puede=True
+                                    else:
+                                        der=False
+                                        que_sentido='abajo'
+                                    if se_puede:
+                                        boton_inicio.Update(text=a_poner[0])
+                                        acumulador_puntos_pc=acumulador_puntos_pc+calcular_puntos(boton_inicio,a_poner[0],bolsa_fichas)
+                                        i=0
+                                        for x in a_poner[1:]:
+                                            i+=1
+                                            boton_aux=window.FindElement((posx_inicio,posy_inicio+i))
+                                            boton_aux.Update(text=x)
+                                            acumulador_puntos_pc=acumulador_puntos_pc+calcular_puntos(boton_aux,x,bolsa_fichas)
+                                        palabra_puesta=True
+                    text=window.FindElement('text_pun_comp')
+                    text.Update(acumulador_puntos_pc)
+                    turno_quien='usuario'
+                    texto=window.FindElement('tur')
+                    texto.Update('Turno:'+turno_quien)                    
+                                           
                 else:
                     indice=-1
                     reinicio(fichas_recien_usadas,fichas_usadas,tuplas_recien_usadas,lista_tuplas_usadas)
@@ -411,8 +539,8 @@ def imprimir_tablero():
                     continuar=True
                 tuplas_recien_usadas=[]
                 fichas_recien_usadas=[]
-
-           elif event=='borrador':
+                 
+            elif event=='borrador':
                 sumador_puntos_jugador=but
                 text=window.FindElement('text_pun_pal')
                 text.Update(sumador_puntos_jugador)
@@ -426,12 +554,13 @@ def imprimir_tablero():
                 reinicio(fichas_recien_usadas,fichas_usadas,tuplas_recien_usadas,lista_tuplas_usadas)
                 tuplas_recien_usadas=[]
                 fichas_recien_usadas=[]
-
-        elif event == 'reglas':
+             
+        if event == 'reglas':
             imprimir_reglas()
-
+           
         if event=='rank':
             imprimir_rankin(acumulador_puntos_jugador,'difi')
+        
         if(event=='terminar'):
              break
 
