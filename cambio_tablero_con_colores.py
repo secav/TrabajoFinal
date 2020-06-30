@@ -176,8 +176,8 @@ def imprimir_tablero():
      		azul.extend(datos_int)
      	elif(nivel=='dificil'):
       		rojo.extend(datos_ext)
-      		rojo.extend(datos_int)		
-	  	
+      		rojo.extend(datos_int)
+
      	for i in range(15):
      		row = []
      		for j in range(15):
@@ -211,7 +211,7 @@ def imprimir_tablero():
     	[sg.Text('Presione aqui para')],
     	[sg.Text('cambiar las fichas'),sg.Text('(3)',key='cant_cambio')]]
     	return layout
-    	
+
     def columna_puntos():
         '''Devuelve el diseño de los puntajes, el de la computadora y el del jugador '''
         layout=[[sg.Text('Puntaje computadora')],
@@ -223,18 +223,18 @@ def imprimir_tablero():
         [sg.Text('Puntaje palabra actual')],
         [sg.Text('0',key='text_pun_pal')]]
         return layout
-        
-        
-        
-    	
-		
-		
-    
+
+
+
+
+
+
+
     def columna_atril_computadora():
         '''Devuelve el diseño del atril de la computadora '''
         layout=[[but(''),but(''),but(''),but(''),but(''),but(''),but('')]]
         return layout
-    
+
     def columna_atril_jugador():
         '''Devuelve el diseño del atril del jugador con sus fichas correspondientes '''
         layout=[[but(letra_elegida(bolsa_fichas),1),but(letra_elegida(bolsa_fichas),2),but(letra_elegida(bolsa_fichas),3),but(letra_elegida(bolsa_fichas),4),but(letra_elegida(bolsa_fichas),5),but(letra_elegida(bolsa_fichas),6),but(letra_elegida(bolsa_fichas),7)]]
@@ -256,7 +256,7 @@ def imprimir_tablero():
     	print('fin del juego')
 
     def convertTuple(tup):
-        str =  ''.join(tup) 
+        str =  ''.join(tup)
         return str
     def palabra_pc(letras_pc,bolsa_fichas,dificultad,conj_dificil):
         '''La funcion recibe las fichas de la computadora, toma entre 3 y 7 letras y las permuta hasta encontrar una palabra. Luego retorna las fichas de la palabra en una lista y toma nuevas fichas'''
@@ -269,7 +269,7 @@ def imprimir_tablero():
             letras_permutadas = permutations(letras_pc,i)
             for x in letras_permutadas:
                 lista_palabra=list(x)
-                x=convertTuple(x).lower() 
+                x=convertTuple(x).lower()
                 if check_pattern(x,dificultad,conj_dificil):
                     palabra=x
                     palabra_encontrada=True
@@ -312,7 +312,7 @@ def imprimir_tablero():
     continuar=True
     dic_letras={}
     dic_letra_anterior={}
-    
+
 
     tam_celda =25
     color_button = ('white','green')
@@ -321,9 +321,9 @@ def imprimir_tablero():
     layout = [
              [sg.Button('INICIAR',key='inicio',size=(12,None)),sg.Button('Ranking',key='rank'),sg.Button('Reglas',key='reglas'),sg.Button('Terminar juego',key='terminar')],
              [sg.Text('Turno:                 ',key='tur')],
-             [sg.Text(' '*60),sg.Column(columna_atril_computadora(),background_color='Black',size=(290,45 ))],
+             [sg.Text(' '*60),sg.Column(columna_atril_computadora(),background_color='Black',size=(400,45 ))],
              [sg.Column(columna_puntos()),sg.Column(column_tablero()),sg.Column(columna_bolsa(60,0))],
-            [sg.Text(' '*60),sg.Column(columna_atril_jugador(),background_color='Black',size=(290,45 ))],
+            [sg.Text(' '*60),sg.Column(columna_atril_jugador(),background_color='Black',size=(400,45 ))],
             [sg.Button('Borrar',button_color=('black','white'),key='borrador'),sg.Button('Verificar',button_color=('white','red'),key='verifica')]]
 
     window = sg.Window('ScrabbleAR',layout)
@@ -370,7 +370,7 @@ def imprimir_tablero():
 
 
         if(listo==True): #si ya se apreto el boton iniciar se pueden utizar los otros botones del juego
-                                      
+
             if type(event)==int:
                 ficha=window.FindElement(event)
                 print('tipo:',type(ficha))
@@ -417,7 +417,7 @@ def imprimir_tablero():
                         texto=window.FindElement('cant_cambio')
                     cont_cambio-=1
                     nuevo='('+(str(cont_cambio))+')'
-                    texto.Update(nuevo)	               
+                    texto.Update(nuevo)
 
             elif event == 'verifica':
                 print(list_palabra)
@@ -429,7 +429,7 @@ def imprimir_tablero():
                 if (check_pattern(palabra,nivel_dificultad,conjunto_hard)):
                     turno_quien='computadora'
                     texto=window.FindElement('tur')
-                    texto.Update('Turno:'+turno_quien)												
+                    texto.Update('Turno:'+turno_quien)
                     acumulador_puntos_jugador+=sumador_puntos_jugador
                     text=window.FindElement('text_pun_jug')
                     text.Update(acumulador_puntos_jugador)
@@ -492,7 +492,7 @@ def imprimir_tablero():
                                             boton_aux=window.FindElement((posx_inicio+i,posy_inicio))
                                             boton_aux.Update(text=x)
                                             acumulador_puntos_pc=acumulador_puntos_pc+calcular_puntos(boton_aux,x,bolsa_fichas)
-                                        palabra_puesta=True           
+                                        palabra_puesta=True
                                 elif que_sentido=='derecha':
                                     print('der')
                                     largo_palabra_pc=len(a_poner)
@@ -503,7 +503,7 @@ def imprimir_tablero():
                                             if boton_aux.GetText()!='':
                                                 que_sentido='abajo'
                                                 der=False
-                                                break                                    
+                                                break
                                             elif i == len(a_poner)-2:
                                                 se_puede=True
                                     else:
@@ -523,23 +523,26 @@ def imprimir_tablero():
                     text.Update(acumulador_puntos_pc)
                     turno_quien='usuario'
                     texto=window.FindElement('tur')
-                    texto.Update('Turno:'+turno_quien)                    
-                                           
+                    texto.Update('Turno:'+turno_quien)
+
                 else:
                     indice=-1
                     reinicio(fichas_recien_usadas,fichas_usadas,tuplas_recien_usadas,lista_tuplas_usadas)
                     sumador_puntos_jugador=0
                     text=window.FindElement('text_pun_pal')
                     text.Update(sumador_puntos_jugador)
-                    i=0
-                    dic_letra_anterior={}
-                    list_palabra=[]
-                    abajo=False
-                    al_lado=False
-                    continuar=True
+
                 tuplas_recien_usadas=[]
                 fichas_recien_usadas=[]
-                 
+                dic_letra_anterior={}
+                list_palabra=[]
+                abajo=False
+                al_lado=False
+                continuar=True
+                i=0
+                palabra=''
+
+
             elif event=='borrador':
                 sumador_puntos_jugador=but
                 text=window.FindElement('text_pun_pal')
@@ -554,13 +557,13 @@ def imprimir_tablero():
                 reinicio(fichas_recien_usadas,fichas_usadas,tuplas_recien_usadas,lista_tuplas_usadas)
                 tuplas_recien_usadas=[]
                 fichas_recien_usadas=[]
-             
+
         if event == 'reglas':
             imprimir_reglas()
-           
+
         if event=='rank':
             imprimir_rankin(acumulador_puntos_jugador,'difi')
-        
+
         if(event=='terminar'):
              break
 
