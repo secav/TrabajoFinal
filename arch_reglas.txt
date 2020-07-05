@@ -1,1 +1,16 @@
+Reglas del juego:
+Para comenzar el juego se debe presionar el botón iniciar, que aleatoriamente decide quién comienza a jugar:la computadora o el jugador.
+En la primer jugada una de las letras debe estar situada en el casillero de inicio (casillero amarillo).
+El jugador debe formar palabras de dos o más letras, las cuales se pueden colocar solo vertical(en forma descendente) u horizontalmente.
+Se permiten palabras “pegadas”, es decir, dos palabras consecutivas horizontal o verticalmente. Por otro lado, no se permite insertar palabras en una posición tal que se cruce a otra ya puesta en el tablero.
+Una vez ingresada la palabra, se debe confirmar la misma en el tablero (botón ‘verificar’) y, automáticamente, se evaluará si esta corresponde a la clasificación que se está usando en el juego. Esto dependerá del nivel que el jugador seleccionó en la configuración. De no ser válida, las fichas serán devueltas al atril del jugador.
+Si el jugador ingresa una ficha o fichas de la/s cual/es se arrepiente, antes de presionar el botón “verificar”, podrá usar el botón “borrar” para intentarlo nuevamente.
+Una vez que se haya verificado la palabra, se le repondrá al jugador la cantidad de fichas utilizadas.
+En cualquier momento del juego, el  jugador puede usar su turno para cambiar algunas o todas sus fichas, haciendo click en la bolsa de fichas. Ésto le reemplazará aquellas que seleccionó, por otras aleatorias de dicha bolsa. En este mismo turno, el jugador no podrá colocar ninguna palabra sobre el tablero. Esta opción puede ser utilizada como máximo tres veces, durante la partida.
+ El puntaje de cada jugador se calcula de la siguiente forma: se suma el puntaje de cada letra(esto lo decide el jugador en la configuración) y si una letra de la palabra cae en algún casillero con premio(casillero azul) o con descuento(casillero rojo) se duplicará  o reducirá a la mitad el puntaje adicional de la misma, respectivamente.
+ El juego termina cuando:
+○ el jugador en turno no puede completar sus siete (7) fichas luego de una jugada,
+dado que no hay más fichas en la bolsa de fichas del juego.
+○ se acabó el tiempo de la partida.
+○ se presionó el botón “TERMINAR” partida.
 
