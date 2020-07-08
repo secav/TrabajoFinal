@@ -8,7 +8,7 @@ def imprimir_reglas():
 
     reglas=open('arch_reglas.txt','r')
 
-    layout = [[sg.Text(reglas.read())],
+    layout = [[sg.Text(reglas.read(), size=(100,30))],
             [sg.Button('Volver',button_color=('white','black'),key='volver')]
             ]
     window = sg.Window('Reglas').Layout(layout)
