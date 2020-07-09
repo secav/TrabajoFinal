@@ -286,7 +286,7 @@ def imprimir_tablero():
         print(lista_palabra)
         return lista_palabra
 
-    def turno_palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard):
+    def turno_palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard):	
         acum_puntos_pc=0
         print(fichas_computadora)
         a_poner=palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard)
@@ -362,8 +362,21 @@ def imprimir_tablero():
                                 boton_aux.Update(text=x)
                                 acum_puntos_pc=acum_puntos_pc+calcular_puntos(boton_aux,x,bolsa_fichas)
                             palabra_puesta=True
+        turno_quien='usuario'
+        texto=window.FindElement('tur')
+        texto.Update('Turno:'+turno_quien)                    
         return acum_puntos_pc
-
+      
+    def cumple(primero, cas_inicio,tuplas):
+        if(primero==False):
+           listo=False
+           for i in tuplas:
+              if i==cas_inicio:
+                  listo=True
+                  break
+        else:
+           listo=True 
+        return listo
 
 
 
@@ -389,8 +402,9 @@ def imprimir_tablero():
     continuar=True
     dic_letras={}
     dic_letra_anterior={}
-
-
+    
+    casillero_inicio=(7,7)
+    primero=False
     tam_celda =25
     color_button = ('white','green')
     tam_button = 3,1
@@ -444,19 +458,16 @@ def imprimir_tablero():
             texto.Update('Turno:'+turno_quien)
             inicio=window.FindElement('inicio')
             inicio.Update('Posponer')
-
-
-        if(listo==True): #si ya se apreto el boton iniciar se pueden utizar los otros botones del juego
-			
-            if turno_quien=='computadora':
+            if(turno_quien=="computadora"):
                 sleep(1)
                 sum_puntos_pc=turno_palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard)
                 acumulador_puntos_pc=acumulador_puntos_pc+sum_puntos_pc
                 text=window.FindElement('text_pun_comp')
                 text.Update(int(acumulador_puntos_pc))
-                turno_quien='usuario'
-                texto=window.FindElement('tur')
-                texto.Update('Turno:'+turno_quien)
+
+
+        if(listo==True): #si ya se apreto el boton iniciar se pueden utizar los otros botones del juego
+                
 
             if type(event)==int:
                 ficha=window.FindElement(event)
@@ -505,6 +516,14 @@ def imprimir_tablero():
                     cont_cambio-=1
                     nuevo='('+(str(cont_cambio))+')'
                     texto.Update(nuevo)
+                turno_quien='computadora'
+                texto=window.FindElement('tur')
+                texto.Update('Turno:'+turno_quien)
+                sleep(1)
+                sum_puntos_pc=turno_palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard)
+                acumulador_puntos_pc=acumulador_puntos_pc+sum_puntos_pc
+                text=window.FindElement('text_pun_comp')
+                text.Update(int(acumulador_puntos_pc))
 
             elif event == 'verifica':
                 print(list_palabra)
@@ -513,10 +532,8 @@ def imprimir_tablero():
                 print('acaaaaaaaaaaa')
                 print(check_pattern(palabra,nivel_dificultad,conjunto_hard))
                 print(palabra)
-                if (check_pattern(palabra,nivel_dificultad,conjunto_hard)):
-                    turno_quien='computadora'
-                    texto=window.FindElement('tur')
-                    texto.Update('Turno:'+turno_quien)
+                if (check_pattern(palabra,nivel_dificultad,conjunto_hard))and cumple(primero,casillero_inicio,tuplas_recien_usadas):
+                    primero=True
                     acumulador_puntos_jugador+=sumador_puntos_jugador
                     text=window.FindElement('text_pun_jug')
                     text.Update(int(acumulador_puntos_jugador))
@@ -530,6 +547,14 @@ def imprimir_tablero():
                         Uncheck_button(i)
                         if i in fichas_usadas:
                             fichas_usadas.remove(i)
+                    turno_quien='computadora'
+                    texto=window.FindElement('tur')
+                    texto.Update('Turno:'+turno_quien)
+                    sleep(1)
+                    sum_puntos_pc=turno_palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard)
+                    acumulador_puntos_pc=acumulador_puntos_pc+sum_puntos_pc
+                    text=window.FindElement('text_pun_comp')
+                    text.Update(int(acumulador_puntos_pc))	 
 
                 else:
                     indice=-1
@@ -550,13 +575,13 @@ def imprimir_tablero():
 
 
             elif event=='borrador':
-                sumador_puntos_jugador=but
+                sumador_puntos_jugador=0
                 text=window.FindElement('text_pun_pal')
                 text.Update(int(sumador_puntos_jugador))
                 i=0
                 dic_letra_anterior={}
                 list_palabra=[]
-                abajo=False
+                abajo=False   
                 al_lado=False
                 continuar=True
                 indice=-1
