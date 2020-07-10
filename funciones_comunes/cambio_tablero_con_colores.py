@@ -286,14 +286,18 @@ def imprimir_tablero():
         print(lista_palabra)
         return lista_palabra
 
-    def turno_palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard):	
+    def turno_palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard,inicia_pc=False):	
         acum_puntos_pc=0
         print(fichas_computadora)
         a_poner=palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard)
         palabra_puesta=False
         while palabra_puesta==False:
-            posx_inicio=random.randrange(15)
-            posy_inicio=random.randrange(15)
+            if inicia_pc:
+                posx_inicio=7
+                posy_inicio=7
+            else:				
+                posx_inicio=random.randrange(15)
+                posy_inicio=random.randrange(15)
             boton_inicio=window.FindElement((posx_inicio,posy_inicio))
             if boton_inicio.GetText()=='':
                 que_sentido=random.choice(['derecha','abajo'])
@@ -403,6 +407,10 @@ def imprimir_tablero():
     dic_letras={}
     dic_letra_anterior={}
     
+    if sys.platform == 'win32':
+        atril_os=283
+    else:
+        atril_os=400    
     casillero_inicio=(7,7)
     primero=False
     tam_celda =25
@@ -412,9 +420,9 @@ def imprimir_tablero():
     layout = [
              [sg.Button('INICIAR',key='inicio',size=(12,None)),sg.Button('Ranking',key='rank'),sg.Button('Reglas',key='reglas'),sg.Button('Terminar juego',key='terminar'),sg.Button('Volver al menu principal',key='volver') ],
              [sg.Text('Turno:                 ',key='tur')],
-             [sg.Text(' '*60),sg.Column(columna_atril_computadora(),background_color='Black',size=(285,45 ))],
+             [sg.Text(' '*60),sg.Column(columna_atril_computadora(),background_color='Black',size=(atril_os,45 ))],
              [sg.Column(columna_puntos()),sg.Column(column_tablero()),sg.Column(columna_bolsa(60,0))],
-            [sg.Text(' '*60),sg.Column(columna_atril_jugador(),background_color='Black',size=(285,45 ))],
+            [sg.Text(' '*60),sg.Column(columna_atril_jugador(),background_color='Black',size=(atril_os,45 ))],
             [sg.Text(' '*60),sg.Button('Borrar',button_color=('black','white'),key='borrador'),sg.Text(' '*40),sg.Button('Verificar',button_color=('white','red'),key='verifica')]]
 
     window = sg.Window('ScrabbleAR',layout)
@@ -460,7 +468,7 @@ def imprimir_tablero():
             inicio.Update('Posponer')
             if(turno_quien=="computadora"):
                 sleep(1)
-                sum_puntos_pc=turno_palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard)
+                sum_puntos_pc=turno_palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard,True)
                 acumulador_puntos_pc=acumulador_puntos_pc+sum_puntos_pc
                 text=window.FindElement('text_pun_comp')
                 text.Update(int(acumulador_puntos_pc))
@@ -480,11 +488,6 @@ def imprimir_tablero():
 
             elif type(event)==tuple  and button_selected and not(ficha in fichas_usadas):
                 print(event)
-                elem=window.FindElement(event)
-                puntos_la_ficha=calcular_puntos(elem,current_button_selected,bolsa_fichas)
-                sumador_puntos_jugador=sumador_puntos_jugador+puntos_la_ficha
-                text=window.FindElement('text_pun_pal')
-                text.Update(int(sumador_puntos_jugador))
                 if not(event in lista_tuplas_usadas):
                     elem=window.FindElement(event)
                     print('imprimo el get texto')
@@ -494,6 +497,12 @@ def imprimir_tablero():
                     if continuar== True:
                         comprobar(elem)
                         print('ficha.GetText():',ficha.GetText())
+                        
+                        puntos_la_ficha=calcular_puntos(elem,current_button_selected,bolsa_fichas)
+                        sumador_puntos_jugador=sumador_puntos_jugador+puntos_la_ficha
+                        text=window.FindElement('text_pun_pal')
+                        text.Update(int(sumador_puntos_jugador))
+                        
                         lista_tuplas_usadas.append(event)
                         tuplas_recien_usadas.append(event)#son los lugares recien ocupados, si la palabra no es correcta tengo que sacar de estos lugares lo escrito
                         fichas_usadas.append(ficha)
