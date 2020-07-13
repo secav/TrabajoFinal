@@ -428,7 +428,7 @@ def imprimir_tablero():
              [sg.Text(' '*60),sg.Column(columna_atril_computadora(),background_color='Black',size=(atril_os,45 ))],
              [sg.Column(columna_puntos()),sg.Column(column_tablero()),sg.Column(columna_bolsa(60,0))],
             [sg.Text(' '*60),sg.Column(columna_atril_jugador(),background_color='Black',size=(atril_os,45 ))],
-            [sg.Text(' '*60),sg.Button('Borrar',button_color=('black','white'),key='borrador'),sg.Text(' '*40),sg.Button('Verificar',button_color=('white','red'),key='verifica')]]
+            [sg.Text(' '*60),sg.Button('Borrar',button_color=('black','white'),key='borrador'),sg.Text(' '*40),sg.Button('Verificar',button_color=('white','red'),key='verifica',disabled=True)]]
 
     window = sg.Window('ScrabbleAR',layout)
 
@@ -495,13 +495,13 @@ def imprimir_tablero():
                 print(event)
                 if not(event in lista_tuplas_usadas):
                     elem=window.FindElement(event)
-                    print('imprimo el get texto')
-                    print(elem.GetText())
+#                    print('imprimo el get texto')
+#                    print(elem.GetText())
                     indice, dic_letra_anterior, list_palabra, abajo, al_lado, continuar=comprobar_fichas(ficha,event,indice, dic_letra_anterior, list_palabra, abajo, al_lado)
-                    print('salio')
+#                    print('salio')
                     if continuar== True:
                         comprobar(elem)
-                        print('ficha.GetText():',ficha.GetText())
+#                        print('ficha.GetText():',ficha.GetText())
 
                         puntos_la_ficha=calcular_puntos(elem,current_button_selected,bolsa_fichas)
                         sumador_puntos_jugador=sumador_puntos_jugador+puntos_la_ficha
@@ -513,13 +513,16 @@ def imprimir_tablero():
                         fichas_usadas.append(ficha)
                         fichas_recien_usadas.append(ficha)#son las fichas elegidas ese turno por el usuario, las tengo que devolver en caso de que sea incorrecto
                         block_button(ficha)
+                    if indice==1:
+                        boton_verificar=window.FindElement('verifica')
+                        boton_verificar.Update(disabled=False)
 
             elif event=='bolsa' and (cont_cambio>0):
                 for i in range(7):
                     fichas_jugador.append(window.FindElement(i+1))
-                    print(i+1)
+#                    print(i+1)
                 cambio=cf.creacion_ventana(fichas_jugador)
-                print('lista cambio:')
+#                print('lista cambio:')
                 if len(cambio)>=1:
                     for i in cambio:
                         ficha_cambio=window.FindElement(i)
@@ -543,9 +546,10 @@ def imprimir_tablero():
                 print(list_palabra)
                 palabra=palabra.join(list_palabra)
     #            print(palabra,'holaaaaaaaaaaa')
-                print('acaaaaaaaaaaa')
-                print(check_pattern(palabra,nivel_dificultad,conjunto_hard))
-                print(palabra)
+#                print('acaaaaaaaaaaa')
+                print(check_pattern(palabra,nivel_dificultad,conjunto_hard), 'este es el chek pattern')
+                print(cumple(primero,casillero_inicio,tuplas_recien_usadas), 'este es el cumple')
+                print(palabra, 'esta es la palabra')
                 if (check_pattern(palabra,nivel_dificultad,conjunto_hard))and cumple(primero,casillero_inicio,tuplas_recien_usadas):
                     primero=True
                     acumulador_puntos_jugador+=sumador_puntos_jugador
@@ -554,8 +558,10 @@ def imprimir_tablero():
                     sumador_puntos_jugador=0
                     text=window.FindElement('text_pun_pal')
                     text.Update(int(sumador_puntos_jugador))
-                    print('Puntos jugador: '+str(int(acumulador_puntos_jugador)))
+#                    print('Puntos jugador: '+str(int(acumulador_puntos_jugador)))
                     indice=-1
+                    boton_verificar=window.FindElement('verifica')
+                    boton_verificar.Update(disabled=True)
                     for i in fichas_recien_usadas:
                         i.Update(letra_elegida(bolsa_fichas))
                         Uncheck_button(i)
@@ -572,6 +578,8 @@ def imprimir_tablero():
 
                 else:
                     indice=-1
+                    boton_verificar=window.FindElement('verifica')
+                    boton_verificar.Update(disabled=True)
                     reinicio(fichas_recien_usadas,fichas_usadas,tuplas_recien_usadas,lista_tuplas_usadas)
                     sumador_puntos_jugador=0
                     text=window.FindElement('text_pun_pal')
@@ -599,6 +607,8 @@ def imprimir_tablero():
                 al_lado=False
                 continuar=True
                 indice=-1
+                boton_verificar=window.FindElement('verifica')
+                boton_verificar.Update(disabled=True)
                 reinicio(fichas_recien_usadas,fichas_usadas,tuplas_recien_usadas,lista_tuplas_usadas)
                 tuplas_recien_usadas=[]
                 fichas_recien_usadas=[]
@@ -614,3 +624,4 @@ def imprimir_tablero():
 
 
     window.Close()
+
