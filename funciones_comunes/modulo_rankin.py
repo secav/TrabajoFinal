@@ -8,14 +8,20 @@ def imprimir_rankin(puntaje_ult, nivel_ult):
     Se le ingresa de la ventana de tablero el puntaje de la ultima partida y el nivel en el cual se jugo. Si ese puntaje entra en
     el top ten lo guarda en un diccionario que despues sera agregado en el archivo rankin.txt que es donde se guarda toda esta
     informacion'''
+    def aviso():
+        '''mensaje que aparece si no se encuantran los archivos necesarios para abrir la ventana'''
+        sg.popup('No se ha encontrado el archivo correspondiente para abrir esta ventana')
+
 
     def ordenar_lista(aux_lista):
         '''ordena la lista de datos segun el puntaje de mayor a menor'''
         aux_lista=sorted(aux_lista, key= lambda x:x[1], reverse=True)
         return aux_lista
 
-
-    archivo= open('./datos/rankin.txt','r')
+    try:
+        archivo= open('./datos/rankin.txt','r')
+    except FileNotFoundError:
+        aviso()
     lista_puntajes=[]
     aux_lista=[]
     aux_tupla=[]
@@ -40,9 +46,10 @@ def imprimir_rankin(puntaje_ult, nivel_ult):
     if len(lista_puntajes)>=11:
         lista_puntajes.pop()
 
-
-
-    archivo=open('./datos/rankin.txt','w')
+    try:
+        archivo= open('./datos/rankin.txt','w')
+    except FileNotFoundError:
+        aviso()
     json.dump(lista_puntajes,archivo)
     archivo.close()
 
@@ -70,7 +77,10 @@ def imprimir_rankin(puntaje_ult, nivel_ult):
 #        print(evento,valores)
 
         if evento=='Volver':
-            archivo=open('./datos/rankin.txt','w')
+            try:
+                archivo= open('./datos/rankin.txt','w')
+            except FileNotFoundError:
+                aviso()
             json.dump(lista_puntajes,archivo)
             archivo.close()
             break
