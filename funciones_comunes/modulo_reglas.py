@@ -6,7 +6,7 @@ def imprimir_reglas():
     '''esta funcion abre el archivo donde se encuentran las reglas del juego y las imprime en una ventana nueva
     tiene un boton para volver al tablero'''
 
-    reglas=open('./datos/arch_reglas.txt','r')
+    reglas=open('./datos/arch_reglas.txt','r', encoding="utf8")
 
     layout = [[sg.Text(reglas.read(), size=(100,30))],
             [sg.Button('Volver',button_color=('white','black'),key='volver')]
