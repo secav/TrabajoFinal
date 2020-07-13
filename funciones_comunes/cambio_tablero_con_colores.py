@@ -9,6 +9,7 @@ from funciones_comunes.modulo_configuraciones import imprimir_configuraciones
 from funciones_comunes.modulo_rankin import imprimir_rankin
 from itertools import permutations
 from time import sleep
+import json
 
 def imprimir_tablero():
     def check_pattern(palabra,nivel,conjunto_dificil):
@@ -286,7 +287,7 @@ def imprimir_tablero():
         print(lista_palabra)
         return lista_palabra
 
-    def turno_palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard,inicia_pc=False):	
+    def turno_palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard,inicia_pc=False):
         acum_puntos_pc=0
         print(fichas_computadora)
         a_poner=palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard)
@@ -295,7 +296,7 @@ def imprimir_tablero():
             if inicia_pc:
                 posx_inicio=7
                 posy_inicio=7
-            else:				
+            else:
                 posx_inicio=random.randrange(15)
                 posy_inicio=random.randrange(15)
             boton_inicio=window.FindElement((posx_inicio,posy_inicio))
@@ -368,9 +369,9 @@ def imprimir_tablero():
                             palabra_puesta=True
         turno_quien='usuario'
         texto=window.FindElement('tur')
-        texto.Update('Turno:'+turno_quien)                    
+        texto.Update('Turno:'+turno_quien)
         return acum_puntos_pc
-      
+
     def cumple(primero, cas_inicio,tuplas):
         if(primero==False):
            listo=False
@@ -379,12 +380,17 @@ def imprimir_tablero():
                   listo=True
                   break
         else:
-           listo=True 
+           listo=True
         return listo
 
 
 
     #programa principal:
+
+    #LEO EL ARCHIVO QUE VIENE DE CONFIGURACIONES CON LOS DATOS DE LAS LETRAS
+    arch_configuraciones=open('./datos/configuracion_guardada.txt','r')
+    lista_datos_letras=[]
+    lista_datos_letras=json.load(arch_configuraciones)
 
     #tiempo_juego                   #esto viene importado
     #dic_configuracion              #esto viene importado
@@ -397,7 +403,6 @@ def imprimir_tablero():
     	conjunto_hard=random.choice(posibles_conjuntos)
     	print('Juega con el conjunto: '+conjunto_hard)
 
-
     lista_tuplas_usadas=[]
     list_palabra=[]
     indice=-1
@@ -406,11 +411,11 @@ def imprimir_tablero():
     continuar=True
     dic_letras={}
     dic_letra_anterior={}
-    
+
     if sys.platform == 'win32':
         atril_os=283
     else:
-        atril_os=400    
+        atril_os=400
     casillero_inicio=(7,7)
     primero=False
     tam_celda =25
@@ -475,7 +480,7 @@ def imprimir_tablero():
 
 
         if(listo==True): #si ya se apreto el boton iniciar se pueden utizar los otros botones del juego
-                
+
 
             if type(event)==int:
                 ficha=window.FindElement(event)
@@ -497,12 +502,12 @@ def imprimir_tablero():
                     if continuar== True:
                         comprobar(elem)
                         print('ficha.GetText():',ficha.GetText())
-                        
+
                         puntos_la_ficha=calcular_puntos(elem,current_button_selected,bolsa_fichas)
                         sumador_puntos_jugador=sumador_puntos_jugador+puntos_la_ficha
                         text=window.FindElement('text_pun_pal')
                         text.Update(int(sumador_puntos_jugador))
-                        
+
                         lista_tuplas_usadas.append(event)
                         tuplas_recien_usadas.append(event)#son los lugares recien ocupados, si la palabra no es correcta tengo que sacar de estos lugares lo escrito
                         fichas_usadas.append(ficha)
@@ -563,7 +568,7 @@ def imprimir_tablero():
                     sum_puntos_pc=turno_palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard)
                     acumulador_puntos_pc=acumulador_puntos_pc+sum_puntos_pc
                     text=window.FindElement('text_pun_comp')
-                    text.Update(int(acumulador_puntos_pc))	 
+                    text.Update(int(acumulador_puntos_pc))
 
                 else:
                     indice=-1
@@ -590,7 +595,7 @@ def imprimir_tablero():
                 i=0
                 dic_letra_anterior={}
                 list_palabra=[]
-                abajo=False   
+                abajo=False
                 al_lado=False
                 continuar=True
                 indice=-1
