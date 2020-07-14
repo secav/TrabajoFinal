@@ -9,6 +9,7 @@ from funciones_comunes.modulo_configuraciones import imprimir_configuraciones
 from funciones_comunes.modulo_rankin import imprimir_rankin
 from itertools import permutations
 from time import sleep
+import time
 import json
 
 def imprimir_tablero():
@@ -205,7 +206,7 @@ def imprimir_tablero():
     	'''Devuelve el diseño del tiempo y la bolsa de fichas que se le muestran al jugador'''
     	layout=[
     	[sg.T('Tiempo ')],
-    	[sg.T(seg)],
+    	[sg.T('00:00:00',key='tiemp')],
     	[sg.T(' '  * 10)],
     	[sg.T(' '  * 10)],
     	[sg.Button(image_filename="./imagenes/bolsachica.png",image_size=(100, 100),key="bolsa", border_width=0)],
@@ -431,8 +432,8 @@ def imprimir_tablero():
             [sg.Text(' '*60),sg.Button('Borrar',button_color=('black','white'),key='borrador'),sg.Text(' '*40),sg.Button('Verificar',button_color=('white','red'),key='verifica',disabled=True)]]
 
     window = sg.Window('ScrabbleAR',layout)
-
-    listo=False
+    primera_vez=False
+    empezado=False
     acumulador_puntos_jugador=0
     sumador_puntos_jugador=0
     acumulador_puntos_pc=0
@@ -455,17 +456,20 @@ def imprimir_tablero():
 
     cont_cambio=3
     while True:
-
-        event, values = window.Read()
-        print(event,values)
+        if empezado:
+            event, values = window.read(timeout=10)
+            current_time = int(round(time.time() * 100)) - start_time
+        else:
+            event, values = window.read()
         if event is None or 'tipo' == 'Exit':
             break
-
-        elif event =='inicio' and listo==False:
-            listo=True
+ 
+        elif event =='inicio' and not empezado:
+            empezado=True
+            start_time = int(round(time.time() * 100))
+            current_time = 0
+            paused_time = start_time
             desicion=['computadora','usuario']
-            # t = timer(3.0, timeout)
-            # t.start()
             turno_quien=random.choice(desicion)
             texto=window.FindElement('tur')
             texto.Update('Turno:'+turno_quien)
@@ -477,9 +481,11 @@ def imprimir_tablero():
                 acumulador_puntos_pc=acumulador_puntos_pc+sum_puntos_pc
                 text=window.FindElement('text_pun_comp')
                 text.Update(int(acumulador_puntos_pc))
+                primero=True
+                primera_vez=True
 
 
-        if(listo==True): #si ya se apreto el boton iniciar se pueden utizar los otros botones del juego
+        if(empezado==True): #si ya se apreto el boton iniciar se pueden utizar los otros botones del juego
 
 
             if type(event)==int:
@@ -533,14 +539,14 @@ def imprimir_tablero():
                     cont_cambio-=1
                     nuevo='('+(str(cont_cambio))+')'
                     texto.Update(nuevo)
-                turno_quien='computadora'
-                texto=window.FindElement('tur')
-                texto.Update('Turno:'+turno_quien)
-                sleep(1)
-                sum_puntos_pc=turno_palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard)
-                acumulador_puntos_pc=acumulador_puntos_pc+sum_puntos_pc
-                text=window.FindElement('text_pun_comp')
-                text.Update(int(acumulador_puntos_pc))
+                    turno_quien='computadora'
+                    texto=window.FindElement('tur')
+                    texto.Update('Turno:'+turno_quien)
+                    sleep(1)
+                    sum_puntos_pc=turno_palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard)
+                    acumulador_puntos_pc=acumulador_puntos_pc+sum_puntos_pc
+                    text=window.FindElement('text_pun_comp')
+                    text.Update(int(acumulador_puntos_pc))
 
             elif event == 'verifica':
                 print(list_palabra)
@@ -550,8 +556,13 @@ def imprimir_tablero():
                 print(check_pattern(palabra,nivel_dificultad,conjunto_hard), 'este es el chek pattern')
                 print(cumple(primero,casillero_inicio,tuplas_recien_usadas), 'este es el cumple')
                 print(palabra, 'esta es la palabra')
-                if (check_pattern(palabra,nivel_dificultad,conjunto_hard))and cumple(primero,casillero_inicio,tuplas_recien_usadas):
-                    primero=True
+                if  not primera_vez:
+                    if cumple(primero,casillero_inicio,tuplas_recien_usadas):
+                       primero=True
+						
+					
+                if (check_pattern(palabra,nivel_dificultad,conjunto_hard))and primero:
+                    primera_vez=True
                     acumulador_puntos_jugador+=sumador_puntos_jugador
                     text=window.FindElement('text_pun_jug')
                     text.Update(int(acumulador_puntos_jugador))
@@ -577,6 +588,8 @@ def imprimir_tablero():
                     text.Update(int(acumulador_puntos_pc))
 
                 else:
+                    if not primera_vez:
+                       primero=False
                     indice=-1
                     boton_verificar=window.FindElement('verifica')
                     boton_verificar.Update(disabled=True)
@@ -621,6 +634,11 @@ def imprimir_tablero():
 
         if(event=='terminar')or(event=='volver'):#por el momento es el mismo, pero deberian ser distintos if porque volver no guardaria nada, pero terminar si
             break
+        window['tiemp'].update('{:02d}:{:02d}.{:02d}'.format((current_time // 100) // 60,
+                                                                  (current_time // 100) % 60,
+                                                                  current_time % 100))	
+        if(current_time//100)//60==10:
+            break	    
 
 
     window.Close()
