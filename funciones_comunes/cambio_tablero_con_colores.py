@@ -6,7 +6,7 @@ from funciones_comunes.modulo_reglas import imprimir_reglas
 import funciones_comunes.cambio_fichas as cf
 from threading import Timer as timer
 from funciones_comunes.modulo_configuraciones import imprimir_configuraciones
-from funciones_comunes.modulo_rankin import imprimir_rankin
+from funciones_comunes.modulo_rankin import guardar_ranking
 from itertools import permutations
 from time import sleep
 import time
@@ -197,14 +197,14 @@ def imprimir_tablero():
      		tablero.append(row)
 
      	return tablero
-     
+
     def columna_timer():
         '''Devuelve el diseño del tiempo que se le muestra al jugador'''
         layout=[
         [sg.Text('TIEMPO',font='Heveltica 15')],
         [sg.Text('00:00:00',font='Heveltica 15',key='tiemp')],
-        ]		 
-        return layout	
+        ]
+        return layout
 
 
 
@@ -379,9 +379,9 @@ def imprimir_tablero():
         return acum_puntos_pc
 
     def cumple(primero, cas_inicio,tuplas):
-        '''Devuelve True si la palabra que el jugador ingreso es la primera y, por lo tanto, una de sus letras se encuentra en el 
-        casillero de inicio; si no es la primera, tambien devuelve True. En caso de que no se cumpla ninguna de las dos 
-        posibilidades devuelve false'''		
+        '''Devuelve True si la palabra que el jugador ingreso es la primera y, por lo tanto, una de sus letras se encuentra en el
+        casillero de inicio; si no es la primera, tambien devuelve True. En caso de que no se cumpla ninguna de las dos
+        posibilidades devuelve false'''
         if(primero==False):
            listo=False
            for i in tuplas:
@@ -432,7 +432,7 @@ def imprimir_tablero():
     tam_button = 3,1
     but = lambda name,clave=None : sg.Button(name,button_color=color_button,size=tam_button,key=clave)
     layout = [
-             [sg.Button('INICIAR',key='inicio',size=(12,None)),sg.Button('Ranking',key='rank'),sg.Button('Reglas',key='reglas'),sg.Button('Terminar juego',key='terminar'),sg.Button('Volver al menu principal',key='volver') ],
+             [sg.Button('INICIAR',key='inicio',size=(12,None)),sg.Button('Terminar juego',key='terminar'),sg.Button('Volver al menu principal',key='volver') ],
              [sg.Text('Turno:                 ',key='tur',font='Fixedsys 16') ],
              [sg.Text(' '*64),sg.Column(columna_atril_computadora(),background_color='Black',size=(atril_os,45 )) ,sg.Text(' '*19),sg.Column(columna_timer())],
              [sg.Column(columna_puntos()),sg.Column(column_tablero()),sg.Column(columna_bolsa(60,0))],
@@ -477,8 +477,8 @@ def imprimir_tablero():
            print('Posponerrrr')
            paused=True
            paused_time = int(round(time.time() * 100))
-               
- 
+
+
         elif event =='inicio' and not empezado:
             empezado=True
             start_time = int(round(time.time() * 100))
@@ -575,8 +575,8 @@ def imprimir_tablero():
                 if  not primera_vez:
                     if cumple(primero,casillero_inicio,tuplas_recien_usadas):
                        primero=True
-						
-					
+
+
                 if (check_pattern(palabra,nivel_dificultad,conjunto_hard))and primero:
                     primera_vez=True
                     acumulador_puntos_jugador+=sumador_puntos_jugador
@@ -642,28 +642,25 @@ def imprimir_tablero():
                 tuplas_recien_usadas=[]
                 fichas_recien_usadas=[]
 
-        if event == 'reglas':
-            imprimir_reglas()
 
-        if event=='rank':
-            imprimir_rankin(acumulador_puntos_jugador,'difi')
 
         if(event=='terminar')or(event=='volver'):#por el momento es el mismo, pero deberian ser distintos if porque volver no guardaria nada, pero terminar si
+            guardar_ranking(acumulador_puntos_jugador,'difi')
             break
         window['tiemp'].update('{:02d}:{:02d}.{:02d}'.format((current_time // 100) // 60,
                                                                   (current_time // 100) % 60,
-                                                                  current_time % 100))	
+                                                                  current_time % 100))
         if(current_time//100)//60==1:
+            guardar_ranking(acumulador_puntos_jugador,'difi')
             if(acumulador_puntos_pc<acumulador_puntos_jugador):
                ganador='Felicitaciones, usted ha ganado'
             elif(acumulador_puntos_pc==acumulador_puntos_jugador):
                 ganador='Se ha producido un empate'
             else:
-                ganador='Usted ha perdido'				
-			
+                ganador='Usted ha perdido'
+
             sg.popup('Fin del juego:'+ganador)
-            break	    
+            break
 
 
     window.Close()
-
