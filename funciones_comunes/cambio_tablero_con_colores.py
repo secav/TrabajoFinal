@@ -197,33 +197,41 @@ def imprimir_tablero():
      		tablero.append(row)
 
      	return tablero
+     
+    def columna_timer():
+        '''Devuelve el diseño del tiempo que se le muestra al jugador'''
+        layout=[
+        [sg.Text('TIEMPO',font='Heveltica 15')],
+        [sg.Text('00:00:00',font='Heveltica 15',key='tiemp')],
+        ]		 
+        return layout	
 
 
 
 
 
     def columna_bolsa(seg,menos):
-    	'''Devuelve el diseño del tiempo y la bolsa de fichas que se le muestran al jugador'''
-    	layout=[
-    	[sg.T('Tiempo ')],
-    	[sg.T('00:00:00',key='tiemp')],
+    	'''Devuelve el diseño de la bolsa de fichas que se le muestran al jugador'''
+    	layout=[[sg.T(' '  * 10)],
+    	[sg.T(' '  * 10)],
     	[sg.T(' '  * 10)],
     	[sg.T(' '  * 10)],
     	[sg.Button(image_filename="./imagenes/bolsachica.png",image_size=(100, 100),key="bolsa", border_width=0)],
-    	[sg.Text('Presione aqui para')],
-    	[sg.Text('cambiar las fichas'),sg.Text('(3)',key='cant_cambio')]]
+    	[sg.Text('Presione aqui para cambiar las fichas',font='Fixedsys 16',size=(15,None))],
+    	[sg.Text('(3)',key='cant_cambio',font='Fixedsys 16')]]
     	return layout
 
     def columna_puntos():
         '''Devuelve el diseño de los puntajes, el de la computadora y el del jugador '''
-        layout=[[sg.Text('Puntaje computadora')],
-        [sg.Text('0                 ', key='text_pun_comp')],
+        layout=[[sg.Frame('Puntaje computadora',[[sg.Text('0                 ', key='text_pun_comp',font='Fixedsys 16')]],font='Fixedsys 16',size=(15,None))],
         [sg.T(' ')],
         [sg.T(' ')],
-        [sg.Text('Puntaje jugador')],
-        [sg.Text('0                 ', key='text_pun_jug')],
-        [sg.Text('Puntaje palabra actual')],
-        [sg.Text('0                 ',key='text_pun_pal')]]
+        [sg.T(' ')],
+        [sg.T(' ')],
+        [sg.T(' ')],
+        [sg.Frame('Puntaje jugador',[[sg.Text('0                 ', key='text_pun_jug',font='Fixedsys 16')]],font='Fixedsys 16')],
+        [sg.Frame('Puntaje ',[[sg.Text('palabra actual',font='Fixedsys 16')],[sg.Text('0                 ',key='text_pun_pal',font='Fixedsys 16')]],font='Fixedsys 16',size=(15,None))],
+        ]
         return layout
 
 
@@ -254,9 +262,6 @@ def imprimir_tablero():
     		lugar.Update('')
     		if k in lista_tuplas_usadas:
     			lista_tuplas_usadas.remove(k)
-    def timeout():
-    	print('fin del juego')
-
 
     def palabra_pc(letras_pc,bolsa_fichas,dificultad,conj_dificil):
         '''La funcion recibe las fichas de la computadora, toma entre 3 y 7 letras y las permuta hasta encontrar una palabra. Luego retorna las fichas de la palabra en una lista y toma nuevas fichas'''
@@ -374,6 +379,9 @@ def imprimir_tablero():
         return acum_puntos_pc
 
     def cumple(primero, cas_inicio,tuplas):
+        '''Devuelve True si la palabra que el jugador ingreso es la primera y, por lo tanto, una de sus letras se encuentra en el 
+        casillero de inicio; si no es la primera, tambien devuelve True. En caso de que no se cumpla ninguna de las dos 
+        posibilidades devuelve false'''		
         if(primero==False):
            listo=False
            for i in tuplas:
@@ -425,15 +433,17 @@ def imprimir_tablero():
     but = lambda name,clave=None : sg.Button(name,button_color=color_button,size=tam_button,key=clave)
     layout = [
              [sg.Button('INICIAR',key='inicio',size=(12,None)),sg.Button('Ranking',key='rank'),sg.Button('Reglas',key='reglas'),sg.Button('Terminar juego',key='terminar'),sg.Button('Volver al menu principal',key='volver') ],
-             [sg.Text('Turno:                 ',key='tur')],
-             [sg.Text(' '*60),sg.Column(columna_atril_computadora(),background_color='Black',size=(atril_os,45 ))],
+             [sg.Text('Turno:                 ',key='tur',font='Fixedsys 16') ],
+             [sg.Text(' '*64),sg.Column(columna_atril_computadora(),background_color='Black',size=(atril_os,45 )) ,sg.Text(' '*19),sg.Column(columna_timer())],
              [sg.Column(columna_puntos()),sg.Column(column_tablero()),sg.Column(columna_bolsa(60,0))],
-            [sg.Text(' '*60),sg.Column(columna_atril_jugador(),background_color='Black',size=(atril_os,45 ))],
-            [sg.Text(' '*60),sg.Button('Borrar',button_color=('black','white'),key='borrador'),sg.Text(' '*40),sg.Button('Verificar',button_color=('white','red'),key='verifica',disabled=True)]]
+            [sg.Text(' '*64),sg.Column(columna_atril_jugador(),background_color='Black',size=(atril_os,45 ))],
+            [sg.Text(' '*64),sg.Button('Borrar',button_color=('black','white'),key='borrador'),sg.Text(' '*40),sg.Button('Verificar',button_color=('white','red'),key='verifica',disabled=True)]]
 
     window = sg.Window('ScrabbleAR',layout)
     primera_vez=False
-    empezado=False
+    paused=False
+    current_time=0
+    empezado=False #cuando se presiona el boton iniciar  pasa a True
     acumulador_puntos_jugador=0
     sumador_puntos_jugador=0
     acumulador_puntos_pc=0
@@ -456,13 +466,18 @@ def imprimir_tablero():
 
     cont_cambio=3
     while True:
-        if empezado:
+        if empezado and not paused:
             event, values = window.read(timeout=10)
             current_time = int(round(time.time() * 100)) - start_time
         else:
             event, values = window.read()
         if event is None or 'tipo' == 'Exit':
             break
+        if event =='inicio' and  empezado:#se activo posponer
+           print('Posponerrrr')
+           paused=True
+           paused_time = int(round(time.time() * 100))
+               
  
         elif event =='inicio' and not empezado:
             empezado=True
@@ -501,6 +516,7 @@ def imprimir_tablero():
                 print(event)
                 if not(event in lista_tuplas_usadas):
                     elem=window.FindElement(event)
+                    print(bolsa_fichas)
 #                    print('imprimo el get texto')
 #                    print(elem.GetText())
                     indice, dic_letra_anterior, list_palabra, abajo, al_lado, continuar=comprobar_fichas(ficha,event,indice, dic_letra_anterior, list_palabra, abajo, al_lado)
@@ -637,7 +653,15 @@ def imprimir_tablero():
         window['tiemp'].update('{:02d}:{:02d}.{:02d}'.format((current_time // 100) // 60,
                                                                   (current_time // 100) % 60,
                                                                   current_time % 100))	
-        if(current_time//100)//60==10:
+        if(current_time//100)//60==1:
+            if(acumulador_puntos_pc<acumulador_puntos_jugador):
+               ganador='Felicitaciones, usted ha ganado'
+            elif(acumulador_puntos_pc==acumulador_puntos_jugador):
+                ganador='Se ha producido un empate'
+            else:
+                ganador='Usted ha perdido'				
+			
+            sg.popup('Fin del juego:'+ganador)
             break	    
 
 
