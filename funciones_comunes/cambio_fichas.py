@@ -3,6 +3,10 @@ import PySimpleGUI as sg
 #funcion que intecambie las fichas
 
 def creacion_ventana(fichas):
+	'''Esta funcion recibe las fichas del jugador y crea una ventana con las mismas de manera que el jugador pueda seleccionar 
+	las que desea intercambiar por otras aleatorias de la bolsa de fichas. La funcion devuelve una lista vacia en caso de 
+	que el jugador haya presionado el boton cancelar o la cruz para cerrar la ventana; si ninguna de las cosas sucedio 
+	devuelve una lista con las fichas que el jugador desea intercambiar'''
 	tam_celda =25
 	color_button = ('white','green')
 	tam_button = 3,1
