@@ -2,15 +2,13 @@ import PySimpleGUI as sg
 import json
 import time
 
-def imprimir_rankin(puntaje_ult, nivel_ult):
+def aviso():
+    '''mensaje que aparece si no se encuantran los archivos necesarios para abrir la ventana'''
+    sg.popup('No se ha encontrado el archivo correspondiente para abrir esta ventana')
 
-    '''imprime la ventana que muestra el top ten del juego con la fecha, el puntaje y el nivel en el cual se lograron.
-    Se le ingresa de la ventana de tablero el puntaje de la ultima partida y el nivel en el cual se jugo. Si ese puntaje entra en
-    el top ten lo guarda en un diccionario que despues sera agregado en el archivo rankin.txt que es donde se guarda toda esta
-    informacion'''
-    def aviso():
-        '''mensaje que aparece si no se encuantran los archivos necesarios para abrir la ventana'''
-        sg.popup('No se ha encontrado el archivo correspondiente para abrir esta ventana')
+def guardar_ranking(puntaje_ult, nivel_ult):
+    '''entran el nivel y el puntaje que pobtuvo el jugador en la ultima partida jugada y lo guarda en el archivo
+    que tiene todos los datos guardados'''
 
 
     def ordenar_lista(aux_lista):
@@ -30,7 +28,6 @@ def imprimir_rankin(puntaje_ult, nivel_ult):
     fecha= time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime())
     dic_datos_ult={'fecha':fecha,'puntaje':puntaje_ult,'nivel':nivel_ult}
     lista_puntajes.append(dic_datos_ult)
-
     for i in lista_puntajes:
         aux_tupla=[i['fecha'],i['puntaje'],i['nivel']]
         aux_lista.append(aux_tupla)
@@ -42,9 +39,10 @@ def imprimir_rankin(puntaje_ult, nivel_ult):
         i['nivel']=aux_lista[j][2]
         j=j+1
 
-
     if len(lista_puntajes)>=11:
         lista_puntajes.pop()
+
+
 
     try:
         archivo= open('./datos/rankin.txt','w')
@@ -53,9 +51,27 @@ def imprimir_rankin(puntaje_ult, nivel_ult):
     json.dump(lista_puntajes,archivo)
     archivo.close()
 
+
+
+
+def imprimir_rankin():
+
+    '''imprime la ventana que muestra el top ten del juego con la fecha, el puntaje y el nivel en el cual se lograron.
+    Se le ingresa de la ventana de tablero el puntaje de la ultima partida y el nivel en el cual se jugo. Si ese puntaje entra en
+    el top ten lo guarda en un diccionario que despues sera agregado en el archivo rankin.txt que es donde se guarda toda esta
+    informacion'''
+
     lista_colum1=[]
     lista_colum2=[]
     lista_colum3=[]
+
+    try:
+        archivo= open('./datos/rankin.txt','r')
+    except FileNotFoundError:
+        aviso()
+    lista_puntajes=[]
+    lista_puntajes=json.load(archivo)
+    archivo.close()
 
     for i in lista_puntajes:
         lista_colum1.append([sg.Text(i['fecha'], size=(20,1))])
@@ -77,14 +93,11 @@ def imprimir_rankin(puntaje_ult, nivel_ult):
 #        print(evento,valores)
 
         if evento=='Volver':
-            try:
-                archivo= open('./datos/rankin.txt','w')
-            except FileNotFoundError:
-                aviso()
-            json.dump(lista_puntajes,archivo)
-            archivo.close()
             break
         elif evento==None:
             break
 
     window.Close()
+
+#imprimir_rankin()
+
