@@ -1,4 +1,5 @@
 Reglas del juego:
+El juego se juega con dos jugadores: la computadora y el usuario.
 Para comenzar el juego se debe presionar el botón iniciar, que aleatoriamente decide quién comienza a jugar:la computadora o el jugador.
 En la primer jugada una de las letras debe estar situada en el casillero de inicio (casillero amarillo).
 El jugador debe formar palabras de dos o más letras, las cuales se pueden colocar solo vertical(en forma descendente) u horizontalmente.
