@@ -432,7 +432,7 @@ def imprimir_tablero():
     tam_button = 3,1
     but = lambda name,clave=None : sg.Button(name,button_color=color_button,size=tam_button,key=clave)
     layout = [
-             [sg.Button('INICIAR',key='inicio',size=(12,None)),sg.Button('Terminar juego',key='terminar'),sg.Button('Volver al menu principal',key='volver') ],
+             [sg.Button('INICIAR',key='inicio',size=(12,None)),sg.Button('Terminar juego',key='terminar') ],
              [sg.Text('Turno:                 ',key='tur',font='Fixedsys 16') ],
              [sg.Text(' '*64),sg.Column(columna_atril_computadora(),background_color='Black',size=(atril_os,45 )) ,sg.Text(' '*19),sg.Column(columna_timer())],
              [sg.Column(columna_puntos()),sg.Column(column_tablero()),sg.Column(columna_bolsa(60,0))],
@@ -644,7 +644,7 @@ def imprimir_tablero():
 
 
 
-        if(event=='terminar')or(event=='volver'):#por el momento es el mismo, pero deberian ser distintos if porque volver no guardaria nada, pero terminar si
+        if(event=='terminar'):
             guardar_ranking(acumulador_puntos_jugador,'difi')
             break
         window['tiemp'].update('{:02d}:{:02d}.{:02d}'.format((current_time // 100) // 60,
