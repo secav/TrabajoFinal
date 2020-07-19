@@ -279,16 +279,14 @@ def imprimir_tablero():
                     palabra=x
                     palabra_encontrada=True
                     break
-            if not(cant_letras):
+            if not(cant_letras) and not(palabra_encontrada):
                 print('no existen palabras')
                 for x in range(7):
                     letras_pc[x]=letra_elegida(bolsa_fichas)
                 cant_letras=[3,4,5,6,7]
         print('palabra de la pc= ',palabra)
-        pal_len=len(palabra)
         for x in lista_palabra:
             letras_pc.remove(x)
-        for x in range(pal_len):
             letras_pc.append(letra_elegida(bolsa_fichas))
         print(letras_pc)
         print(lista_palabra)
@@ -407,7 +405,7 @@ def imprimir_tablero():
     nivel_dificultad=lista_datos_letras[29]['letra'].lower()
     lista_datos_letras.pop()
     bolsa_fichas=crear_fichas(lista_datos_letras)
-        
+
     conjunto_hard=''
     if(nivel_dificultad=='dificil'):
     	posibles_conjuntos=['NN','VB','JJ']
@@ -561,8 +559,9 @@ def imprimir_tablero():
                     texto=window.FindElement('tur')
                     texto.Update('Turno:'+turno_quien)
                     sleep(1)
-                    sum_puntos_pc=turno_palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard)
+                    sum_puntos_pc=turno_palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard,primera_vez)
                     acumulador_puntos_pc=acumulador_puntos_pc+sum_puntos_pc
+                    primera_vez=True
                     text=window.FindElement('text_pun_comp')
                     text.Update(int(acumulador_puntos_pc))
 
