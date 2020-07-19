@@ -30,17 +30,16 @@ def imprimir_tablero():
     		return False
 
     #El dic_importado adentro del for es redundante??
-    def crear_fichas():
+    def crear_fichas(lista_importada):
     	'''Genera una lista que contiene un diccionario con la cantidad y valor en puntos de cada letra y una lista que informa la cantidad de letras de las que hay mas de 0'''
     	#x[0] es la letra, x[1] es la cantidad y x[2] es el valor en puntos
-    	letra=[('A',11,1),('B',3,3),('C',4,2),('D',4,2),('E',11,1),('F',2,4),('G',2,1),('H',2,4),('I',6,1),('J',2,4),('K',1,8),('L',4,1),('LL',1,8),('M',3,2),('N',5,1),('Ñ',1,8),('O',8,1),('P',2,3),('Q',1,8),('R',4,1),('RR',1,8),('S',7,1),('T',4,1),('U',6,1),('V',2,4),('W',1,8),('X',1,8),('Y',1,4),('Z',1,10)]
     	dic_importado={}
     	lista_disponibles=[]
     	lista_completa=[]
-    	for x in letra:
-    		if x[1] > 0:
-    			lista_disponibles.append(x[0])
-    		dic_importado[x[0]]=[x[1],x[2]]
+    	for x in lista_importada:
+    		dic_importado[x['letra']]=[x['cant'],x['pun']]
+    		if x['cant'] > 0:
+    			lista_disponibles.append(x['letra'])
     	lista_completa=[dic_importado,lista_disponibles]
     	print(lista_completa)
     	return lista_completa
@@ -280,9 +279,11 @@ def imprimir_tablero():
                     palabra=x
                     palabra_encontrada=True
                     break
-            # if not(cant_letras):
-                # print('no existen palabras')   #hacer excepcion
-                # break
+            if not(cant_letras):
+                print('no existen palabras')
+                for x in range(7):
+                    letras_pc[x]=letra_elegida(bolsa_fichas)
+                cant_letras=[3,4,5,6,7]
         print('palabra de la pc= ',palabra)
         pal_len=len(palabra)
         for x in lista_palabra:
@@ -299,7 +300,7 @@ def imprimir_tablero():
         a_poner=palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard)
         palabra_puesta=False
         while palabra_puesta==False:
-            if inicia_pc:
+            if not inicia_pc:
                 posx_inicio=7
                 posy_inicio=7
             else:
@@ -400,12 +401,13 @@ def imprimir_tablero():
     arch_configuraciones=open('./datos/configuracion_guardada.txt','r')
     lista_datos_letras=[]
     lista_datos_letras=json.load(arch_configuraciones)
-
-    #tiempo_juego                   #esto viene importado
-    #dic_configuracion              #esto viene importado
-    nivel_dificultad='facil'        #esto viene importado
-
-    bolsa_fichas=crear_fichas()
+    arch_configuraciones.close()
+    
+    tiempo=lista_datos_letras[29]['cant']
+    nivel_dificultad=lista_datos_letras[29]['letra'].lower()
+    lista_datos_letras.pop()
+    bolsa_fichas=crear_fichas(lista_datos_letras)
+        
     conjunto_hard=''
     if(nivel_dificultad=='dificil'):
     	posibles_conjuntos=['NN','VB','JJ']
@@ -492,7 +494,7 @@ def imprimir_tablero():
             inicio.Update('Posponer')
             if(turno_quien=="computadora"):
                 sleep(1)
-                sum_puntos_pc=turno_palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard,True)
+                sum_puntos_pc=turno_palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard,primera_vez)
                 acumulador_puntos_pc=acumulador_puntos_pc+sum_puntos_pc
                 text=window.FindElement('text_pun_comp')
                 text.Update(int(acumulador_puntos_pc))
@@ -598,7 +600,7 @@ def imprimir_tablero():
                     texto=window.FindElement('tur')
                     texto.Update('Turno:'+turno_quien)
                     sleep(1)
-                    sum_puntos_pc=turno_palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard)
+                    sum_puntos_pc=turno_palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard,primera_vez)
                     acumulador_puntos_pc=acumulador_puntos_pc+sum_puntos_pc
                     text=window.FindElement('text_pun_comp')
                     text.Update(int(acumulador_puntos_pc))
