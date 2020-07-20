@@ -3,12 +3,21 @@ from funciones_comunes.modulo_configuraciones import imprimir_configuraciones
 from funciones_comunes.cambio_tablero_con_colores import imprimir_tablero
 from funciones_comunes.modulo_rankin import imprimir_rankin
 from funciones_comunes.modulo_reglas import imprimir_reglas
+from funciones_comunes.modulo_posponer import abrir_posponer
+
 
 
 ''' Este codigo imprime la ventana de Menu principal del juego con 2 botones: el que abre el tablero e inicia una partida
 y el que abre la ventana para configurar el juego'''
+opcion=abrir_posponer()
+if(type(opcion)==bool):
+	visi=False
+else:
+	visi=True
+
 sg.theme('DarkAmber')
 layout=[[sg.Text('Menu Principal')],
+[sg.Button('Continuar partida',key='continue',visible=visi)],
 [sg.Button('Iniciar Partida', key='partida')],
         [sg.Button('Configuraciones', key='conf')],
         [sg.Button('Ranking',key='rank')],
@@ -19,15 +28,17 @@ window=sg.Window('ScrableAr').Layout(layout)
 
 while True:
     evento, valor = window.Read()
+    if evento=='continue':
+        imprimir_tablero(opcion)    
     if evento == 'partida':
         imprimir_tablero()
-    if evento == 'conf':
+    elif evento == 'conf':
         imprimir_configuraciones()
-    if evento == 'reglas':
+    elif evento == 'reglas':
         imprimir_reglas()
-    if evento=='rank':
+    elif evento=='rank':
         imprimir_rankin()
-    if evento in ('Salir', None):
+    elif evento in ('Salir', None):
         break
 
 window.close()
