@@ -346,8 +346,8 @@ def imprimir_tablero(pospuesto=False):
                 print(que_sentido)
                 se_puede=False
                 der=True
-                izq=True
-                while (der or izq) and palabra_puesta==False:
+                abj=True
+                while (der or abj) and palabra_puesta==False:
                     print('while')
                     print(str(posy_inicio))
                     print(str(posx_inicio))
