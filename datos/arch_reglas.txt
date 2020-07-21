@@ -17,5 +17,5 @@ dado que no hay más fichas en la bolsa de fichas del juego.
  Existen tres niveles de dificultad(se determina en la configuración):
 ○ fácil:se juega con todo tipo de palabra.
 ○ medio:se juega con verbos y sustantivos.
-○ difícil:de las posibles categorias(adjetivos,verbos, sustantivos)se elige una al azar, y con esa se juega
+○ difícil:de las posibles categorias(adjetivos,verbos, sustantivos)se elige una al azar, y con esa se juega.
 
