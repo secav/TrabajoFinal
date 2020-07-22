@@ -9,6 +9,7 @@ def creacion_ventana(fichas):
 	devuelve una lista con las fichas que el jugador desea intercambiar'''
 	tam_celda =25
 	color_button = ('white','green')
+	print(type(fichas[0]))
 	tam_button = 3,1
 	But = lambda name,clave : sg.Button(name,button_color=color_button,size=tam_button,key=clave)
 	layout=[[sg.Text('Seleccione las fichas a cambiar')],

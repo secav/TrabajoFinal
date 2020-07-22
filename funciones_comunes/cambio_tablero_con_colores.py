@@ -508,6 +508,7 @@ def imprimir_tablero(pospuesto=False):
         tablero=pospuesto['tablero']
         conjunto_hard=pospuesto['conjunto_hard']
         start_time=pospuesto['start_time']
+        turno_quien=pospuesto['turno_quien']
         		
             
 
@@ -580,36 +581,36 @@ def imprimir_tablero(pospuesto=False):
            paused_time = int(round(time.time() * 100))
            tablero=obtener_tablero()
            if(nivel_dificultad=='dificil'):
-              guardar_posponer(start_time,fichas_jugador,fichas_computadora,acumulador_puntos_pc,acumulador_puntos_jugador,paused_time,nivel_dificultad,tablero,bolsa_fichas,cont_cambio,lista_tuplas_usadas,max_tiempo,primera_vez,primero,palabras_permitidas,conjunto_hard)
+              guardar_posponer(turno_quien,start_time,fichas_jugador,fichas_computadora,acumulador_puntos_pc,acumulador_puntos_jugador,paused_time,nivel_dificultad,tablero,bolsa_fichas,cont_cambio,lista_tuplas_usadas,max_tiempo,primera_vez,primero,palabras_permitidas,conjunto_hard)
            else:
-              guardar_posponer(start_time,fichas_jugador,fichas_computadora,acumulador_puntos_pc,acumulador_puntos_jugador,paused_time,nivel_dificultad,tablero,bolsa_fichas,cont_cambio,lista_tuplas_usadas,max_tiempo,primera_vez,primero,palabras_permitidas)
+              guardar_posponer(turno_quien,start_time,fichas_jugador,fichas_computadora,acumulador_puntos_pc,acumulador_puntos_jugador,paused_time,nivel_dificultad,tablero,bolsa_fichas,cont_cambio,lista_tuplas_usadas,max_tiempo,primera_vez,primero,palabras_permitidas)
 			   
            break
 
 
         elif event =='inicio' and not empezado:
             empezado=True
+            inicio=window.FindElement('inicio')
+            inicio.Update('Posponer')
             if(pospuesto==False):
                start_time = int(round(time.time() * 100))
                current_time = 0
                paused_time = start_time
-            else:
-               paused = False
-               start_time = start_time + int(round(time.time() * 100)) - paused_time
-            desicion=['computadora','usuario']
-            turno_quien=random.choice(desicion)
-            texto=window.FindElement('tur')
-            texto.Update('Turno:'+turno_quien)
-            inicio=window.FindElement('inicio')
-            inicio.Update('Posponer')
-            if(turno_quien=="computadora"):
-                sleep(1)
-                sum_puntos_pc=turno_palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard,primera_vez)
-                acumulador_puntos_pc=acumulador_puntos_pc+sum_puntos_pc
-                text=window.FindElement('text_pun_comp')
-                text.Update(int(acumulador_puntos_pc))
-                primero=True
-                primera_vez=True
+               desicion=['computadora','usuario']
+               turno_quien=random.choice(desicion)
+               texto=window.FindElement('tur')
+               texto.Update('Turno:'+turno_quien)
+               if(turno_quien=="computadora"):
+                   sleep(1)
+                   sum_puntos_pc=turno_palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard,primera_vez)
+                   acumulador_puntos_pc=acumulador_puntos_pc+sum_puntos_pc
+                   text=window.FindElement('text_pun_comp')
+                   text.Update(int(acumulador_puntos_pc))
+                   primero=True
+                   primera_vez=True
+               else:
+                   paused = False
+                   start_time = start_time + int(round(time.time() * 100)) - paused_time
 
 
         if(empezado==True): #si ya se apreto el boton iniciar se pueden utizar los otros botones del juego
