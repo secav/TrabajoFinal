@@ -4,7 +4,6 @@ import random
 import sys
 from funciones_comunes.modulo_reglas import imprimir_reglas
 import funciones_comunes.cambio_fichas as cf
-from threading import Timer as timer
 from funciones_comunes.modulo_configuraciones import imprimir_configuraciones
 from funciones_comunes.modulo_rankin import guardar_ranking
 from funciones_comunes.modulo_posponer import guardar_posponer
