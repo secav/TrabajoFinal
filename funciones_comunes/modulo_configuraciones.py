@@ -11,21 +11,21 @@ def imprimir_configuraciones():
     def aviso():
         ''' mensaje que aparece cuando se quiere guardar en los recuadros de las fichas una letra o un numero
         negativo'''
-        sg.popup('La cantidad de fichas y su puntaje debe ser un numero mayor igual a 0')
+        sg.popup('Los valores ingresados deben ser numeros mayores iguales a 0')
 
     def aviso_2():
         '''mensaje que aparece si se quiere cerrar la ventana de configuraciones y no se eligio la dificultad
         del nivel'''
         sg.popup('Por favor, elija el nivel de dificultad con el cual quiere jugar')
-    def defino_tiempo(dific):
+    def defino_tiempo(dific, t1, t2, t3):
         '''asocia el velor de la cantidad de tiempo de juego(parametro de entrada), con la dificultas seleccionada en
         la ventana (variable de entrada)'''
         if dific=='Facil':
-            val='120'
+            val=t1
         elif dific=='Medio':
-            val='100'
+            val=t2
         else:
-            val='60'
+            val=t3
         return val
     def aviso_3():
         '''mensaje que aparece si no se encuantran los archivos necesarios para abrir la ventana'''
@@ -38,9 +38,17 @@ def imprimir_configuraciones():
         arch=open('./datos/configuracion_guardada.txt', 'r')
     except FileNotFoundError:
         aviso_3()
+    try:
+        arch_tiem=open('./datos/configuracion_tiemp.txt', 'r')
+    except FileNotFoundError:
+        aviso_3()
     lista_guardada=[]
+    lista_tiemp=[]
     lista_guardada= json.load(arch)
     arch.close()
+    lista_tiemp=json.load(arch_tiem)
+    arch_tiem.close()
+
     list_datos_letras=[]
     lista_col1=[]
     lista_claves=[]
@@ -70,10 +78,12 @@ def imprimir_configuraciones():
     nivel_def=lista_guardada[len(lista_guardada)-1]['letra']
     tiem_def=lista_guardada[len(lista_guardada)-1]['cant']
 
-    layout_config=[[sg.Text('Dificultad:'),sg.InputCombo(values=('Facil','Medio','Dificil'),key='difi',default_value=nivel_def,enable_events=True)],
-                [sg.Text('Tiempo en segundos:'),sg.Text(tiem_def,key='tiem', size=(3,1)), sg.Text('Segundos')],
-                [sg.Text('Cantidades de letras y puntos:')],
-                [sg.Column(lista_col1),sg.Column(lista_col2)],
+    layout_config=[[sg.Frame('Dificultad:',[[sg.InputCombo(values=('Facil','Medio','Dificil'),key='difi',default_value=nivel_def,enable_events=True)]]),
+                sg.Frame('Tiempo de la Partida:',[[sg.Text(tiem_def,key='tiem', size=(3,1)), sg.Text('Minutos')]])],
+                [sg.Frame('Cantidades de letras y puntos:',
+                [[sg.Column(lista_col1),sg.Column(lista_col2)]])],
+                [sg.Frame('Configuracion de tiempo por nivel',[
+                [sg.Text('Nivel: Facil', size=(11,1)), sg.InputText(lista_tiemp[0]['facil'],size=(3,1), key='tiemf'), sg.Text('minutos', size=(11,1)),sg.Text('Nivel: Medio', size=(11,1)), sg.InputText(lista_tiemp[0]['medio'],size=(3,1), key='tiemm'), sg.Text('minutos', size=(11,1)),sg.Text('Nivel: Dificil', size=(11,1)), sg.InputText(lista_tiemp[0]['dificil'],size=(3,1), key='tiemd'), sg.Text('minutos', size=(11,1))]])],
                 [sg.Button('Guardar'),sg.Button('Restaurar Valores')]
                 ]
     windowconf = sg.Window('Configuracion').Layout(layout_config)
@@ -81,62 +91,93 @@ def imprimir_configuraciones():
     lista_aux=[]
     lista_originales=[]
     j=''
+    t1=3
+    t2=2
+    t3=1
+    t_aux=False
     while True:
         evento,valores = windowconf.Read()
         list_datos_letras=[]
         dif_aux= valores['difi']
         if dif_aux!= '':
+            t1=valores['tiemf']
+            t2=valores['tiemm']
+            t3=valores['tiemd']
             tiempo=windowconf.FindElement('tiem')
-            tiempo.Update(defino_tiempo(dif_aux))
+            tiempo.Update(defino_tiempo(dif_aux, t1, t2, t3))
         if evento=='Guardar':
-            for i in lista_claves:
-                try:
+            t=False
+
+            try:
+                for i in lista_claves:
+
                     if len(i[0])==2:
                         j=i[0][0]
                         dic_aux['letra']=j
-#                        try:
+    #                        try:
                         dic_aux['cant']=int(valores[i[0]])
                         dic_aux['pun']=int(valores[i[1]])
-                        if dic_aux['cant']<0:
-                            raise ValueError
-                        elif dic_aux['pun']<0:
-                            raise ValueError
-#                        dic_aux={}
+                        if valores[i[0]].isdigit() and valores[i[1]].isdigit():
+                            t=True
+
                     else:
                         j=i[0][0:2]
                         dic_aux['letra']=j
                         dic_aux['cant']=int(valores[i[0]])
                         dic_aux['pun']=int(valores[i[1]])
-                        if dic_aux['cant']<0:
-                            raise ValueError
-                        elif dic_aux['pun']<0:
-                            raise ValueError
-#                        list_datos_letras.append(dic_aux)
-#                        dic_aux={}
+                        if valores[i[0]].isdigit() and valores[i[1]].isdigit():
+                            t=True
+
+                    if t:
+                        list_datos_letras.append(dic_aux)
+
+                        dic_aux={}
+                        t==False
+
+
+            except ValueError:
+                aviso()
+                list_datos_letras=[]
+
+            if len(list_datos_letras) == 29:
+                t1=valores['tiemf']
+                t2=valores['tiemm']
+                t3=valores['tiemd']
+                tiempo=windowconf.FindElement('tiem')
+                tiempo.Update(defino_tiempo(dif_aux, t1, t2, t3))
+                tiempo_guardar=defino_tiempo(dif_aux, t1, t2, t3)
+                dif_aux= valores['difi']
+                try:
+                    dic_aux={'letra': dif_aux, 'cant':int(tiempo_guardar), 'pun':''}
                 except ValueError:
                     aviso()
-                    list_datos_letras=[]
+                    t_aux=False
                 else:
-                    list_datos_letras.append(dic_aux)
-                    dic_aux={}
-#            print(list_datos_letras, 'esta es las lista de datos')
-            if len(list_datos_letras) == 29:
+                    t_aux=True
 
+                try:
+                    archivo=open('./datos/configuracion_guardada.txt.txt','w')
+                except FileNotFoundError:
+                    aviso_3()
+                list_datos_letras.append(dic_aux)
+                json.dump(list_datos_letras,archivo)
+                archivo.close()
+                print(t1,t2,t3, 'estos son los tiempos')
+                lista_tiemp[0]['facil']=valores['tiemf']
+                lista_tiemp[0]['medio']=valores['tiemm']
+                lista_tiemp[0]['dificil']=valores['tiemd']
+                print(lista_tiemp)
 
-                dif_aux= valores['difi']
-                if dif_aux== '':
-                    aviso_2()
-                else:
-                    tiempo=defino_tiempo(dif_aux)
-                    dic_aux={'letra': dif_aux, 'cant':int(tiempo), 'pun':''}
-                    try:
-                        archivo=open('./datos/configuracion_guardada.txt','w')
-                    except FileNotFoundError:
-                        aviso_3()
-                    list_datos_letras.append(dic_aux)
-                    json.dump(list_datos_letras,archivo)
-                    archivo.close()
-                    dic_aux={}
+                try:
+                    arch_tiem=open('./datos/configuracion_tiemp.txt','w')
+                except FileNotFoundError:
+                    aviso_3()
+                json.dump(lista_tiemp, arch_tiem)
+                print(lista_tiemp)
+                dic_aux={}
+                arch_tiem.close()
+                if t_aux:
+
                     break
         elif evento=='Restaurar Valores':
             try:
@@ -155,3 +196,5 @@ def imprimir_configuraciones():
         elif evento == None:
             break
     windowconf.Close()
+#    return dificultad
+#imprimir_configuraciones()
