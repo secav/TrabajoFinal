@@ -17,7 +17,7 @@ def guardar_ranking(puntaje_ult, nivel_ult):
         return aux_lista
 
     try:
-        archivo= open('./datos/rankin.txt','r')
+        archivo= open('rankin.txt','r')
     except FileNotFoundError:
         aviso()
     lista_puntajes=[]
@@ -25,7 +25,8 @@ def guardar_ranking(puntaje_ult, nivel_ult):
     aux_tupla=[]
     lista_puntajes=json.load(archivo)
     archivo.close()
-    fecha= time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime())
+    fe= time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime())
+    fecha=fe[4:22]
     dic_datos_ult={'fecha':fecha,'puntaje':puntaje_ult,'nivel':nivel_ult}
     lista_puntajes.append(dic_datos_ult)
     for i in lista_puntajes:
@@ -45,7 +46,7 @@ def guardar_ranking(puntaje_ult, nivel_ult):
 
 
     try:
-        archivo= open('./datos/rankin.txt','w')
+        archivo= open('rankin.txt','w')
     except FileNotFoundError:
         aviso()
     json.dump(lista_puntajes,archivo)
@@ -66,7 +67,7 @@ def imprimir_rankin():
     lista_colum3=[]
 
     try:
-        archivo= open('./datos/rankin.txt','r')
+        archivo= open('rankin.txt','r')
     except FileNotFoundError:
         aviso()
     lista_puntajes=[]
@@ -99,5 +100,5 @@ def imprimir_rankin():
 
     window.Close()
 
+#guardar_ranking(10, 'dificil')
 #imprimir_rankin()
-
