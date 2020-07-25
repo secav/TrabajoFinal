@@ -33,13 +33,13 @@ while(salio==False):
 	while True:
 		evento, valor = window.Read()
 		if evento=='continue':
-			imprimir_tablero(opcion)
 			remove('juego_postergado.txt')
+			imprimir_tablero(opcion)
 			break    
 		if evento == 'partida':
-			imprimir_tablero()
 			if (type(opcion)!=bool):
 				remove('juego_postergado.txt')
+			imprimir_tablero()
 			break
 		elif evento == 'conf':
 			imprimir_configuraciones()
