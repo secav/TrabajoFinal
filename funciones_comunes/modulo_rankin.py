@@ -17,7 +17,7 @@ def guardar_ranking(puntaje_ult, nivel_ult):
         return aux_lista
 
     try:
-        archivo= open('rankin.txt','r')
+        archivo= open('./datos/rankin.txt','r')
     except FileNotFoundError:
         aviso()
     lista_puntajes=[]
@@ -46,7 +46,7 @@ def guardar_ranking(puntaje_ult, nivel_ult):
 
 
     try:
-        archivo= open('rankin.txt','w')
+        archivo= open('./datos/rankin.txt','w')
     except FileNotFoundError:
         aviso()
     json.dump(lista_puntajes,archivo)
@@ -67,7 +67,7 @@ def imprimir_rankin():
     lista_colum3=[]
 
     try:
-        archivo= open('rankin.txt','r')
+        archivo= open('./datos/rankin.txt','r')
     except FileNotFoundError:
         aviso()
     lista_puntajes=[]
