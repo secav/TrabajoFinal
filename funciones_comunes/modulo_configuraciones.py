@@ -156,7 +156,7 @@ def imprimir_configuraciones():
                     t_aux=True
 
                 try:
-                    archivo=open('./datos/configuracion_guardada.txt.txt','w')
+                    archivo=open('./datos/configuracion_guardada.txt','w')
                 except FileNotFoundError:
                     aviso_3()
                 list_datos_letras.append(dic_aux)
