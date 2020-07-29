@@ -45,17 +45,22 @@ def imprimir_tablero(pospuesto=False):
     	return lista_completa
 
     #la funcion recibe el diccionario y retorna una letra
-    def letra_elegida(dic,cambio=False,ficha_cambio=None):
-    	'''La funcion recibe la lista de fichas y retorna una letra'''
+    def letra_elegida(dic,quien_cambia=None,ficha_cambio=None):
+    	'''La funcion recibe la lista de fichas y retorna una letra, si la funcion recibe el parametro quien_cambia devuelve una ficha al diccionario de fichas'''
     	if dic[1]:
+			
+    		if quien_cambia!=None:
+    			if quien_cambia=='usuario':
+    				ficha_text=ficha_cambio.GetText()
+    				dic[0][ficha_text][0]+=1
+    				if dic[0][ficha_text][0]==1:
+    					dic[1].append(ficha_text)
+    			elif quien_cambia=='pc':
+    				dic[0][ficha_cambio][0]+=1
+    				if dic[0][ficha_cambio][0]==1:
+    					dic[1].append(ficha_cambio)
+    			
     		llave_random=random.choice(dic[1])
-    		print(llave_random)
-    		if(ficha_cambio!=None):
-    			print(ficha_cambio.GetText())
-    		if(cambio==True)and(llave_random==ficha_cambio.GetText()):
-    			print('si')
-    			llave_random=random.choice(dic[1])
-
     		dic[0][llave_random][0] -=1
     		if dic[0][llave_random][0] == 0:
     			dic[1].remove(llave_random)
@@ -317,7 +322,7 @@ def imprimir_tablero(pospuesto=False):
             if not(cant_letras) and not(palabra_encontrada):
                 print('no existen palabras')
                 for x in range(7):
-                    letras_pc[x]=letra_elegida(bolsa_fichas)
+                    letras_pc[x]=letra_elegida(bolsa_fichas,'pc',letras_pc[x])
                 cant_letras=[3,4,5,6,7]
         print('palabra de la pc= ',palabra)
         for x in lista_palabra:
@@ -327,7 +332,8 @@ def imprimir_tablero(pospuesto=False):
         print(lista_palabra)
         return lista_palabra
 
-    def turno_palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard,inicia_pc=False):
+    def turno_palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard,tuplas_usadas,inicia_pc=False):
+        ''' Esta funcion genera una palabra llamando a la funcion palabra_pc y luego la ubica en el tablero de forma aleatoria'''
         acum_puntos_pc=0
         print(fichas_computadora)
         a_poner=palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard)
@@ -340,6 +346,7 @@ def imprimir_tablero(pospuesto=False):
                 posx_inicio=random.randrange(15)
                 posy_inicio=random.randrange(15)
             boton_inicio=window.FindElement((posx_inicio,posy_inicio))
+            tuplas_a_usar=[(posx_inicio,posy_inicio)]
             if boton_inicio.GetText()=='':
                 que_sentido=random.choice(['derecha','abajo'])
                 print(que_sentido)
@@ -377,9 +384,11 @@ def imprimir_tablero(pospuesto=False):
                             i=0
                             for x in a_poner[1:]:
                                 i+=1
+                                tuplas_a_usar.append((posx_inicio+i,posy_inicio))
                                 boton_aux=window.FindElement((posx_inicio+i,posy_inicio))
                                 boton_aux.Update(text=x)
                                 acum_puntos_pc=acum_puntos_pc+calcular_puntos(boton_aux,x,bolsa_fichas)
+                            tuplas_usadas+=tuplas_usadas+tuplas_a_usar
                             palabra_puesta=True
                     elif que_sentido=='derecha':
                         print('der')
@@ -403,9 +412,11 @@ def imprimir_tablero(pospuesto=False):
                             i=0
                             for x in a_poner[1:]:
                                 i+=1
+                                tuplas_a_usar.append((posx_inicio,posy_inicio+i))
                                 boton_aux=window.FindElement((posx_inicio,posy_inicio+i))
                                 boton_aux.Update(text=x)
                                 acum_puntos_pc=acum_puntos_pc+calcular_puntos(boton_aux,x,bolsa_fichas)
+                            tuplas_usadas+=tuplas_a_usar
                             palabra_puesta=True
         turno_quien='usuario'
         texto=window.FindElement('tur')
@@ -601,7 +612,7 @@ def imprimir_tablero(pospuesto=False):
                texto.Update('Turno:'+turno_quien)
                if(turno_quien=="computadora"):
                    sleep(1)
-                   sum_puntos_pc=turno_palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard,primera_vez)
+                   sum_puntos_pc=turno_palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard,lista_tuplas_usadas,primera_vez)
                    acumulador_puntos_pc=acumulador_puntos_pc+sum_puntos_pc
                    text=window.FindElement('text_pun_comp')
                    text.Update(int(acumulador_puntos_pc))
@@ -661,8 +672,7 @@ def imprimir_tablero(pospuesto=False):
                     for i in cambio:
                         ficha_cambio=window.FindElement(i)
                         vieja=ficha_cambio
-                        ficha_cambio.Update(letra_elegida(bolsa_fichas,True,ficha_cambio))
-                        bolsa_fichas[0][vieja.GetText()][0] +=1 ###
+                        ficha_cambio.Update(letra_elegida(bolsa_fichas,'usuario',vieja))
                         texto=window.FindElement('cant_cambio')
                     cont_cambio-=1
                     nuevo='('+(str(cont_cambio))+')'
@@ -671,7 +681,7 @@ def imprimir_tablero(pospuesto=False):
                     texto=window.FindElement('tur')
                     texto.Update('Turno:'+turno_quien)
                     sleep(1)
-                    sum_puntos_pc=turno_palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard,primera_vez)
+                    sum_puntos_pc=turno_palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard,lista_tuplas_usadas,primera_vez)
                     acumulador_puntos_pc=acumulador_puntos_pc+sum_puntos_pc
                     primera_vez=True
                     primero=True
@@ -712,7 +722,7 @@ def imprimir_tablero(pospuesto=False):
                     texto=window.FindElement('tur')
                     texto.Update('Turno:'+turno_quien)
                     sleep(1)
-                    sum_puntos_pc=turno_palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard,primera_vez)
+                    sum_puntos_pc=turno_palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard,lista_tuplas_usadas,primera_vez)
                     acumulador_puntos_pc=acumulador_puntos_pc+sum_puntos_pc
                     text=window.FindElement('text_pun_comp')
                     text.Update(int(acumulador_puntos_pc))
