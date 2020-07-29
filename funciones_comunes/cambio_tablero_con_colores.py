@@ -769,13 +769,13 @@ def imprimir_tablero(pospuesto=False):
 
 
         if(event=='terminar'):
-            guardar_ranking(acumulador_puntos_jugador,'difi')
+            guardar_ranking(acumulador_puntos_jugador,nivel_dificultad)
             break
         window['tiemp'].update('{:02d}:{:02d}.{:02d}'.format((current_time // 100) // 60,
                                                                   (current_time // 100) % 60,
                                                                   current_time % 100))
         if(current_time//100)//60==max_tiempo:
-            guardar_ranking(acumulador_puntos_jugador,'difi')
+            guardar_ranking(acumulador_puntos_jugador,nivel_dificultad)
             if(acumulador_puntos_pc<acumulador_puntos_jugador):
                ganador='Felicitaciones, usted ha ganado'
             elif(acumulador_puntos_pc==acumulador_puntos_jugador):
