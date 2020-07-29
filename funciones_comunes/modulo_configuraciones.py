@@ -143,17 +143,17 @@ def imprimir_configuraciones():
                 t1=valores['tiemf']
                 t2=valores['tiemm']
                 t3=valores['tiemd']
-                tiempo=windowconf.FindElement('tiem')
-                tiempo.Update(defino_tiempo(dif_aux, t1, t2, t3))
-                tiempo_guardar=defino_tiempo(dif_aux, t1, t2, t3)
-                dif_aux= valores['difi']
-                try:
+                if t1.isdigit() and t2.isdigit() and t3.isdigit():
+                    tiempo=windowconf.FindElement('tiem')
+                    tiempo.Update(defino_tiempo(dif_aux, t1, t2, t3))
+                    tiempo_guardar=defino_tiempo(dif_aux, t1, t2, t3)
+                    dif_aux= valores['difi']
+                    t_aux=True
                     dic_aux={'letra': dif_aux, 'cant':int(tiempo_guardar), 'pun':''}
-                except ValueError:
+                else:
                     aviso()
                     t_aux=False
-                else:
-                    t_aux=True
+
 
                 try:
                     archivo=open('./datos/configuracion_guardada.txt','w')
