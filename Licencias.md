@@ -1,7 +1,11 @@
 BOLSA DE FICHAS EN EL TABLERO
   bolsachica.png: descargada de “www.pixabay.com” (licenciada por Creative Commons) 
+
+
 BOTONES
     boton_gris.png, boton_naranja.png, boton_naranja_chico.png, boton_rojo.png: descargadas de "www.freepik.com"
+
+
 ICONOS
     libro.png, medalla.png, cinta.png:descargadas de "www.freepik.com"
     pregunta.png :descargada de “www.freepng.es” 
