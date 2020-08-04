@@ -16,6 +16,9 @@ def imprimir_tablero(pospuesto=False):
     def check_pattern(palabra,nivel,conjunto_dificil):
     	'''esta funcion devuelve un boolean en true si la palabra es sustantivo, verbo o adjetivo y es correcta dependiendo del nivel de dificultad'''
     	palabra=palabra.lower()
+    	palabras_no_permitidas=['puto','puta','gil','choto','trolo','cagon','nigga','nigger','cum']
+    	if palabra in palabras_no_permitidas:
+    		return False
     	if (palabra in spelling) or (palabra in lexicon):
     		tipo_palabra=tag(palabra)[0][1]
     		if nivel=='facil':
@@ -29,9 +32,8 @@ def imprimir_tablero(pospuesto=False):
     	else:
     		return False
 
-    #El dic_importado adentro del for es redundante??
     def crear_fichas(lista_importada):
-    	'''Genera una lista que contiene un diccionario con la cantidad y valor en puntos de cada letra y una lista que informa la cantidad de letras de las que hay mas de 0'''
+    	'''Genera una lista que contiene un diccionario con la cantidad y valor en puntos de cada letra y una lista que informa cuales letras tienen una cantidad mayor a cero'''
     	#x[0] es la letra, x[1] es la cantidad y x[2] es el valor en puntos
     	dic_importado={}
     	lista_disponibles=[]
@@ -44,7 +46,6 @@ def imprimir_tablero(pospuesto=False):
     	print(lista_completa)
     	return lista_completa
 
-    #la funcion recibe el diccionario y retorna una letra
     def letra_elegida(dic,quien_cambia=None,ficha_cambio=None):
     	'''La funcion recibe la lista de fichas y retorna una letra, si la funcion recibe el parametro quien_cambia devuelve una ficha al diccionario de fichas'''
     	if dic[1]:
@@ -66,8 +67,7 @@ def imprimir_tablero(pospuesto=False):
     			dic[1].remove(llave_random)
     		return llave_random
     	else:
-    		sg.popup('El diccionario esta vacio')
-    		sys.exit()
+    		raise SystemExit
 
     def letrasjuntas(a, b):
     	'''devuelve true si las 2 letras ingresadas pueden estar juntas en una palabra'''
@@ -304,9 +304,10 @@ def imprimir_tablero(pospuesto=False):
 
     def palabra_pc(letras_pc,bolsa_fichas,dificultad,conj_dificil):
         '''La funcion recibe las fichas de la computadora, toma entre 3 y 7 letras y las permuta hasta encontrar una palabra. Luego retorna las fichas de la palabra en una lista y toma nuevas fichas'''
+        intentos_restantes=25
         palabra_encontrada=False
         cant_letras=[3,4,5,6,7]
-        while palabra_encontrada==False:
+        while (not palabra_encontrada) and intentos_restantes>0:
             i=random.choice(cant_letras)
             cant_letras.remove(i)
             print(cant_letras)
@@ -321,9 +322,12 @@ def imprimir_tablero(pospuesto=False):
                     break
             if not(cant_letras) and not(palabra_encontrada):
                 print('no existen palabras')
+                intentos_restantes-=1
                 for x in range(7):
                     letras_pc[x]=letra_elegida(bolsa_fichas,'pc',letras_pc[x])
                 cant_letras=[3,4,5,6,7]
+        if not palabra_encontrada:
+            raise ValueError                                                                    
         print('palabra de la pc= ',palabra)
         for x in lista_palabra:
             letras_pc.remove(x)
@@ -333,8 +337,12 @@ def imprimir_tablero(pospuesto=False):
         return lista_palabra
 
     def turno_palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard,tuplas_usadas,inicia_pc=False):
-        ''' Esta funcion genera una palabra llamando a la funcion palabra_pc y luego la ubica en el tablero de forma aleatoria'''
+        ''' Esta funcion genera una palabra llamando a la funcion palabra_pc y luego la ubica en el tablero de forma aleatoria, la funcion retorna el valor en puntos de la palabra puesta en el tablero'''
         acum_puntos_pc=0
+        tuplas_posibles=[]
+        for x in range(15):
+            for y in range(15):
+                tuplas_posibles.append((x,y))
         print(fichas_computadora)
         a_poner=palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard)
         palabra_puesta=False
@@ -343,8 +351,10 @@ def imprimir_tablero(pospuesto=False):
                 posx_inicio=7
                 posy_inicio=7
             else:
-                posx_inicio=random.randrange(15)
-                posy_inicio=random.randrange(15)
+                tupla_de_inicio=random.choice(tuplas_posibles)
+                tuplas_posibles.remove(tupla_de_inicio)
+                posx_inicio=tupla_de_inicio[0]
+                posy_inicio=tupla_de_inicio[1]
             boton_inicio=window.FindElement((posx_inicio,posy_inicio))
             tuplas_a_usar=[(posx_inicio,posy_inicio)]
             if boton_inicio.GetText()=='':
@@ -476,8 +486,12 @@ def imprimir_tablero(pospuesto=False):
         acumulador_puntos_pc=0
         fichas_computadora=[]
         tablero=False
-        for i in range(7):
-            fichas_computadora.append(letra_elegida(bolsa_fichas))
+        try:
+            for i in range(7):
+                fichas_computadora.append(letra_elegida(bolsa_fichas))
+        except SystemExit:
+            sg.popup('No hay suficientes fichas para jugar')
+            return
         cont_cambio=3    
         fichas_jugadorb=False
         conjunto_hard=''
@@ -542,7 +556,8 @@ def imprimir_tablero(pospuesto=False):
     color_button = ('white','green')
     tam_button = 3,1
     but = lambda name,clave=None : sg.Button(name,button_color=color_button,size=tam_button,key=clave)
-    layout = [
+    try:
+        layout = [
              [sg.Button('INICIAR',key='inicio',size=(12,None)),sg.Button('Terminar juego',key='terminar') ],
              [sg.Text('Tipos de palabras permitidas:'+palabras_permitidas,font='Fixedsys 16')],
              [sg.Text('Turno:                 ',key='tur',font='Fixedsys 16') ],
@@ -550,7 +565,9 @@ def imprimir_tablero(pospuesto=False):
              [sg.Column(columna_puntos(acumulador_puntos_pc,acumulador_puntos_jugador)),sg.Column(column_tablero(nivel_dificultad,tablero)),sg.Column(columna_bolsa(0,cont_cambio))],
             [sg.Text(' '*64),sg.Column(columna_atril_jugador(fichas_jugadorb),background_color='Black',size=(atril_os,45 ))],
             [sg.Text(' '*64),sg.Button('Borrar',button_color=('black','white'),key='borrador'),sg.Text(' '*40),sg.Button('Verificar',button_color=('white','red'),key='verifica',disabled=True)]]
-
+    except SystemExit:
+        sg.popup('No hay suficientes fichas para jugar')
+        return
 
     window = sg.Window('ScrabbleAR',layout)
     #primera_vez=False
@@ -612,7 +629,20 @@ def imprimir_tablero(pospuesto=False):
                texto.Update('Turno:'+turno_quien)
                if(turno_quien=="computadora"):
                    sleep(1)
-                   sum_puntos_pc=turno_palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard,lista_tuplas_usadas,primera_vez)
+                   try:
+                       sum_puntos_pc=turno_palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard,lista_tuplas_usadas,primera_vez)
+                   except ValueError:
+                       sg.popup('Fin del juego. La pc no puede continuar')
+                       ##############lu ranking
+                       break
+                   except SystemExit:
+                       sg.popup('Fin del juego. No hay mas fichas')
+                       #########lu ranking
+                       break
+                   except IndexError:
+                       sg.popup('Fin del juego. No hay suficiente espacio en el tablero')
+                       ###########lu ranking
+                       break
                    acumulador_puntos_pc=acumulador_puntos_pc+sum_puntos_pc
                    text=window.FindElement('text_pun_comp')
                    text.Update(int(acumulador_puntos_pc))
@@ -681,7 +711,20 @@ def imprimir_tablero(pospuesto=False):
                     texto=window.FindElement('tur')
                     texto.Update('Turno:'+turno_quien)
                     sleep(1)
-                    sum_puntos_pc=turno_palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard,lista_tuplas_usadas,primera_vez)
+                    try:
+                        sum_puntos_pc=turno_palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard,lista_tuplas_usadas,primera_vez)
+                    except ValueError:
+                        sg.popup('Fin del juego. La pc no puede continuar')
+                        ##########################################lu ranking
+                        break
+                    except SystemExit:
+                        sg.popup('Fin del juego. No hay mas fichas')
+                        ##########################################lu ranking
+                        break
+                    except IndexError:
+                        sg.popup('Fin del juego. No hay suficiente espacio en el tablero')
+                        ##########################################lu ranking
+                        break
                     acumulador_puntos_pc=acumulador_puntos_pc+sum_puntos_pc
                     primera_vez=True
                     primero=True
@@ -713,16 +756,34 @@ def imprimir_tablero(pospuesto=False):
                     indice=-1
                     boton_verificar=window.FindElement('verifica')
                     boton_verificar.Update(disabled=True)
-                    for i in fichas_recien_usadas:
-                        i.Update(letra_elegida(bolsa_fichas))
-                        Uncheck_button(i)
-                        if i in fichas_usadas:
-                            fichas_usadas.remove(i)
+                    try:
+                        for i in fichas_recien_usadas:
+                            i.Update(letra_elegida(bolsa_fichas))
+                            Uncheck_button(i)
+                            if i in fichas_usadas:
+                                fichas_usadas.remove(i)
+                    except SystemExit:
+                        sg.popup('Fin del juego. No hay mas fichas')
+                        #############################lu ranking
+                        break
                     turno_quien='computadora'
                     texto=window.FindElement('tur')
                     texto.Update('Turno:'+turno_quien)
                     sleep(1)
-                    sum_puntos_pc=turno_palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard,lista_tuplas_usadas,primera_vez)
+                    try:
+                        sum_puntos_pc=turno_palabra_pc(fichas_computadora,bolsa_fichas,nivel_dificultad,conjunto_hard,lista_tuplas_usadas,primera_vez)
+                    except ValueError:
+                        sg.popup('Fin del juego. La pc no puede continuar')
+                        ##########################################lu ranking
+                        break
+                    except SystemExit:
+                        sg.popup('Fin del juego. No hay mas fichas')
+                        ##########################################lu ranking
+                        break
+                    except IndexError:
+                        sg.popup('Fin del juego. No hay suficiente espacio en el tablero')
+                        ##########################################lu ranking
+                        break
                     acumulador_puntos_pc=acumulador_puntos_pc+sum_puntos_pc
                     text=window.FindElement('text_pun_comp')
                     text.Update(int(acumulador_puntos_pc))
@@ -785,6 +846,5 @@ def imprimir_tablero(pospuesto=False):
 
             sg.popup('Fin del juego:'+ganador)
             break
-
 
     window.Close()
