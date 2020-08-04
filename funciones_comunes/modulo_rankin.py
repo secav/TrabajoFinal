@@ -27,7 +27,7 @@ def guardar_ranking(puntaje_ult, nivel_ult):
     archivo.close()
     fe= time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime())
     fecha=fe[4:22]
-    dic_datos_ult={'fecha':fecha,'puntaje':puntaje_ult,'nivel':nivel_ult}
+    dic_datos_ult={'fecha':fecha,'puntaje':int(puntaje_ult),'nivel':nivel_ult}
     lista_puntajes.append(dic_datos_ult)
     for i in lista_puntajes:
         aux_tupla=[i['fecha'],i['puntaje'],i['nivel']]
