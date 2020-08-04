@@ -7,7 +7,7 @@ BOTONES
 
 
 ICONOS
-    libro.png, medalla.png, cinta.png:descargadas de "www.freepik.com"
+    libro.png, medalla.png, cinta.png, engranaje.png:descargadas de "www.freepik.com";
     pregunta.png :descargada de “www.freepng.es” 
     
   
