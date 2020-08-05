@@ -3,12 +3,12 @@ import PySimpleGUI as sg
 
 def guardar_posponer(turno_quien,start_time,fichas_jugadorb,fichas_computadora,acumulador_puntos_pc,acumulador_puntos_jugador,
 paused_time,nivel_dificultad,tablero,bolsa_fichas,cont_cambio,lista_tuplas_usadas,tiempo,primera_vez,primero,palabras_permitidas,conjunto_hard=''):
-	'''La funcion recibe datos de distinto tipo, crea un archivo de texto donde guarda dichos datos utilizando un diccionario 
+	'''La funcion recibe datos de distinto tipo, crea un archivo de texto donde guarda dichos datos utilizando un diccionario
 	y json '''
 	archivo=open('juego_postergado.txt','w')
 	fichas_jugador=[]
 	num=1
-	
+
 	for i in fichas_jugadorb:
 		letra=i.GetText()
 		#print(letra)
@@ -19,9 +19,8 @@ paused_time,nivel_dificultad,tablero,bolsa_fichas,cont_cambio,lista_tuplas_usada
 	'start_time':start_time,'turno_quien':turno_quien}
 	json.dump(dic,archivo)
 	archivo.close()
-	for clave,valor in dic.items():
-		print(clave,valor)
-		
+
+
 
 def abrir_posponer():
 	'''La funcion intenta abrir el archivo donde se guarda la informacion del juego en el caso de que se haya pospuesto,
@@ -33,4 +32,3 @@ def abrir_posponer():
 		return dic
 	except FileNotFoundError:
 		return False
-		
