@@ -84,7 +84,7 @@ def imprimir_configuraciones():
                 [[sg.Column(lista_col1),sg.Column(lista_col2)]])],
                 [sg.Frame('Configuracion de tiempo por nivel',[
                 [sg.Text('Nivel: Facil', size=(11,1)), sg.InputText(lista_tiemp[0]['facil'],size=(3,1), key='tiemf'), sg.Text('minutos', size=(11,1)),sg.Text('Nivel: Medio', size=(11,1)), sg.InputText(lista_tiemp[0]['medio'],size=(3,1), key='tiemm'), sg.Text('minutos', size=(11,1)),sg.Text('Nivel: Dificil', size=(11,1)), sg.InputText(lista_tiemp[0]['dificil'],size=(3,1), key='tiemd'), sg.Text('minutos', size=(11,1))]])],
-                [sg.Button('Guardar'),sg.Button('Restaurar Valores')]
+                [sg.Button('Guardar',image_filename="./imagenes/boton_naranja_conf.png",image_size=(108, 27),border_width=0,button_color=('black','black')),sg.Button('Restaurar',image_filename="./imagenes/boton_naranja_conf.png",image_size=(108, 27),border_width=0,button_color=('black','black'))]
                 ]
     windowconf = sg.Window('Configuracion').Layout(layout_config)
     dic_aux={}
@@ -162,18 +162,18 @@ def imprimir_configuraciones():
                 list_datos_letras.append(dic_aux)
                 json.dump(list_datos_letras,archivo)
                 archivo.close()
-                print(t1,t2,t3, 'estos son los tiempos')
+
                 lista_tiemp[0]['facil']=valores['tiemf']
                 lista_tiemp[0]['medio']=valores['tiemm']
                 lista_tiemp[0]['dificil']=valores['tiemd']
-                print(lista_tiemp)
+
 
                 try:
                     arch_tiem=open('./datos/configuracion_tiemp.txt','w')
                 except FileNotFoundError:
                     aviso_3()
                 json.dump(lista_tiemp, arch_tiem)
-                print(lista_tiemp)
+
                 dic_aux={}
                 arch_tiem.close()
                 if t_aux:
