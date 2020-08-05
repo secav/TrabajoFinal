@@ -82,11 +82,11 @@ def imprimir_rankin():
 
     layout=[[sg.Text('Fecha', size=(21,1)),sg.Text('Puntaje',size=(13,1)),sg.Text('Nivel',size=(10,1))],
             [sg.Column(lista_colum1),sg.Column(lista_colum2),sg.Column(lista_colum3)],
-            [sg.Button('Volver')]
+            [sg.Button('Volver',image_filename="./imagenes/boton_naranja_chico.png",image_size=(82, 21),border_width=0,button_color=('black','black'))]
             ]
 
 
-    window = sg.Window('Rankin').Layout(layout)
+    window = sg.Window('Top Ten').Layout(layout)
 
 
     while True:
@@ -100,5 +100,5 @@ def imprimir_rankin():
 
     window.Close()
 
-#guardar_ranking(10, 'dificil')
+#guardar_ranking(100.5, 'dificil')
 #imprimir_rankin()
