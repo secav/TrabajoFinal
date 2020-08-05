@@ -543,7 +543,14 @@ def imprimir_tablero(pospuesto=False):
         ubica_colum=64
         ubica_borrar=64
         anch_atril_c=anch_atril_j=45
-        ubica_timer=88
+        if palabras_permitidas=='Verbos y Sustantivos':
+           ubica_timer=60
+        elif palabras_permitidas=='Todas':
+           ubica_timer=88
+        elif palabras_permitidas=='Adjetivos':
+           ubica_timer=80		
+        else:
+           ubica_timer=77	 	
     else:
         atril_os=300
         tipo_letra='Fixedsys 12'

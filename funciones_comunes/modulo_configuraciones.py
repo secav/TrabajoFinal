@@ -84,7 +84,7 @@ def imprimir_configuraciones():
                 [[sg.Column(lista_col1),sg.Column(lista_col2)]])],
                 [sg.Frame('Configuracion de tiempo por nivel',[
                 [sg.Text('Nivel: Facil', size=(11,1)), sg.InputText(lista_tiemp[0]['facil'],size=(3,1), key='tiemf'), sg.Text('minutos', size=(11,1)),sg.Text('Nivel: Medio', size=(11,1)), sg.InputText(lista_tiemp[0]['medio'],size=(3,1), key='tiemm'), sg.Text('minutos', size=(11,1)),sg.Text('Nivel: Dificil', size=(11,1)), sg.InputText(lista_tiemp[0]['dificil'],size=(3,1), key='tiemd'), sg.Text('minutos', size=(11,1))]])],
-                [sg.Button('Guardar',image_filename="./imagenes/boton_naranja_conf.png",image_size=(108, 27),border_width=0,button_color=('black','black')),sg.Button('Restaurar',image_filename="./imagenes/boton_naranja_conf.png",image_size=(108, 27),border_width=0,button_color=('black','black'))]
+                [sg.Button('Guardar',image_filename="./imagenes/boton_naranja_chico.png",image_size=(108, 27),border_width=0,button_color=('black','black')),sg.Button('Restaurar',image_filename="./imagenes/boton_naranja_chico.png",image_size=(108, 27),border_width=0,button_color=('black','black'))]
                 ]
     windowconf = sg.Window('Configuracion').Layout(layout_config)
     dic_aux={}
