@@ -14,17 +14,17 @@ def imprimir_reglas():
     except FileNotFoundError:
         aviso()
 
-    layout = [[sg.Text(reglas.read(), size=(100,30))],
-            [sg.Button('Volver',button_color=('white','black'),key='volver')]
+
+    layout = [[sg.Multiline(reglas.read(), size=(100,30),font='Fixedsys 12', background_color=('black'))],
+            [sg.Button('Volver',image_filename="./imagenes/boton_naranja_chico.png",image_size=(82, 21),border_width=0,button_color=('black','black'))]
             ]
     window = sg.Window('Reglas').Layout(layout)
-    event, values = window.Read()
     reglas.close()
     while True:
+        event, values = window.Read()
 
-        if event == 'volver':
+        if event == 'Volver' or event == None:
             break
-        elif event == None:
-            break
+
 
     window.close()
