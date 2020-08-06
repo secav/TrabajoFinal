@@ -28,12 +28,12 @@ salio=False
 while(salio==False):
 
 	opcion=abrir_posponer()
-	print('opcion',opcion)
+	
 	if(type(opcion)==bool):
 		visi=False
 	else:
 		visi=True
-	print('visi',visi)
+	
 	sg.theme('Black')
 
 	if sys.platform == 'win32':
