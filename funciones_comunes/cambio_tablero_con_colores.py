@@ -449,7 +449,7 @@ def imprimir_tablero(pospuesto=False):
                  elemento=[tup,casillero.GetText()]
                  tab.append(elemento)
        ##[[ho,sa][sa,fd][]]
-        
+
 
         return tab
 
@@ -548,9 +548,9 @@ def imprimir_tablero(pospuesto=False):
         elif palabras_permitidas=='Todas':
            ubica_timer=88
         elif palabras_permitidas=='Adjetivos':
-           ubica_timer=80		
+           ubica_timer=80
         else:
-           ubica_timer=77	 	
+           ubica_timer=77
     else:
         atril_os=300
         tipo_letra='Fixedsys 12'
@@ -559,7 +559,16 @@ def imprimir_tablero(pospuesto=False):
         ubica_borrar=74
         anch_atril_j=35
         anch_atril_c=38
-        ubica_timer=53
+        if palabras_permitidas=='Verbos y Sustantivos':
+           ubica_timer=53
+        elif palabras_permitidas=='Todas':
+           ubica_timer=88
+        elif palabras_permitidas=='Adjetivos':
+           ubica_timer=80
+        elif palabras_permitidas=='Verbos':
+           ubica_timer=87
+        else:
+           ubica_timer=77
     casillero_inicio=(7,7)
 
     tam_celda =25
