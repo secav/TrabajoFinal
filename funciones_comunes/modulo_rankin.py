@@ -86,7 +86,7 @@ def imprimir_rankin():
             ]
 
 
-    window = sg.Window('Top Ten').Layout(layout)
+    window = sg.Window('Top 10').Layout(layout)
 
 
     while True:
