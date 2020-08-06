@@ -38,13 +38,15 @@ while(salio==False):
 
 	if sys.platform == 'win32':
 		cant_esp=9
+		dos=0
 	else:
 		cant_esp=6
+		dos=2
 
 	layout=[[sg.Image('./imagenes/cinta.png')],
 
 	[sg.Text(' '*cant_esp),sg.Column(columna_principal())],
-	[sg.Text(' '*(cant_esp+2)),sg.Column(columna_opciones())]]
+	[sg.Text(' '*(cant_esp+dos)),sg.Column(columna_opciones())]]
 
 	window=sg.Window('ScrableAr').Layout(layout)
 	while True:
