@@ -9,9 +9,9 @@ def imprimir_configuraciones():
     que se obtiene por usar cada una. Guarda los valores indicados en un json para devolverle los datos al programa ppal en el
     mismo'''
     def aviso():
-        ''' mensaje que aparece cuando se quiere guardar en los recuadros de las fichas una letra o un numero
+        ''' mensaje que aparece cuando se quiere guardar en los recuadros de las fichas una letra, el numero cero o un numero
         negativo'''
-        sg.popup('Los valores ingresados deben ser numeros mayores iguales a 0')
+        sg.popup('Los valores ingresados deben ser numeros mayores a 0')
 
     def aviso_2():
         '''mensaje que aparece si se quiere cerrar la ventana de configuraciones y no se eligio la dificultad
