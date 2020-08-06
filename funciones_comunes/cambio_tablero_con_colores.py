@@ -549,8 +549,10 @@ def imprimir_tablero(pospuesto=False):
            ubica_timer=88
         elif palabras_permitidas=='Adjetivos':
            ubica_timer=80
-        else:
+        elif palabras_permitidas=='Sustantivos':
            ubica_timer=77
+        else:
+           ubica_timer=87
     else:
         atril_os=300
         tipo_letra='Fixedsys 12'
@@ -577,7 +579,7 @@ def imprimir_tablero(pospuesto=False):
     but = lambda name,clave=None : sg.Button(name,button_color=color_button,size=tam_button,key=clave)
     try:
         layout = [
-             [sg.Button(' Iniciar ',image_filename="./imagenes/boton_naranja.png",image_size=(126, 33),border_width=0,button_color=('black','black'),key='inicio'),sg.Button('Terminar juego',key='terminar',image_filename="./imagenes/boton_naranja.png",image_size=(126, 33),border_width=0,button_color=('black','black')),sg.Text('Turno:                 ',key='tur',font=tipo_letra)  ],
+             [sg.Button(' Iniciar ',image_filename="./imagenes/boton_naranja.png",image_size=(126, 33),border_width=0,button_color=('black','black'),key='inicio'),sg.Button('Terminar juego',key='terminar',image_filename="./imagenes/boton_naranja.png",image_size=(126, 33),border_width=0,button_color=('black','black')),sg.Text('Nivel:'+nivel_dificultad,font=tipo_letra),sg.Text('Turno:                 ',key='tur',font=tipo_letra)  ],
              [sg.Text('Tipos de palabras permitidas:'+palabras_permitidas,font=tipo_letra),sg.Text(' '*ubica_timer),sg.Column(columna_timer())],
              [sg.Text(' '*ubica_colum),sg.Column(columna_atril_computadora(),background_color='Purple',size=(atril_os,anch_atril_c )) ],
              [sg.Column(columna_puntos(acumulador_puntos_pc,acumulador_puntos_jugador)),sg.Column(column_tablero(nivel_dificultad,tablero)),sg.Column(columna_bolsa(0,cont_cambio))],
@@ -665,9 +667,9 @@ def imprimir_tablero(pospuesto=False):
                    text.Update(int(acumulador_puntos_pc))
                    primero=True
                    primera_vez=True
-               else:
-                   paused = False
-                   start_time = start_time + int(round(time.time() * 100)) - paused_time
+            else:
+                paused = False
+                start_time = start_time + int(round(time.time() * 100)) - paused_time
 
 
         if(empezado==True): #si ya se apreto el boton iniciar se pueden utizar los otros botones del juego
