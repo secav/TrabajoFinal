@@ -13,6 +13,7 @@ import time
 import json
 
 def imprimir_tablero(pospuesto=False):
+    '''Esta funcion ejecuta las funciones que permiten al usuario visualizar el tablero y jugar y recibe un parametro que por defecto es igual a false y sino es el diccionario que se utiliza para seguir jugando una partida guardada'''
     def check_pattern(palabra,nivel,conjunto_dificil):
     	'''esta funcion devuelve un boolean en true si la palabra es sustantivo, verbo o adjetivo y es correcta dependiendo del nivel de dificultad'''
     	palabra=palabra.lower()
@@ -440,6 +441,7 @@ def imprimir_tablero(pospuesto=False):
         return listo
 
     def obtener_tablero():
+        '''Devuelve las posiciones del tablero ocupadas por letras y sus letras correspondientes '''
         tab=[]    #devuelve una lista de listas
         for i in range(15):
            for j in range(15):
